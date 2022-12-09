@@ -6,6 +6,18 @@
 
 namespace ft
 {
+    template <typename T>
+    struct t_node
+    {
+        typedef T   value_type;
+
+        value_type  data;
+        t_node*     parent;
+        t_node*     left;
+        t_node*     right;
+        bool        black;
+    };
+
     template<
         class Key,
         class T,
@@ -25,18 +37,52 @@ namespace ft
         typedef typename allocator_type::const_reference        const_reference;
         typedef typename allocator_type::pointer                pointer;
         typedef typename allocator_type::const_pointer          const_pointer;
-        typedef ft::bidirectional_iterator<value_type>          iterator;
-        typedef ft::bidirectional_iterator<const value_type>    const_iterator;
+
+    template <class U>
+    struct bidirectional_iterator_map
+    {
+        typedef bidirectional_iterator_tag                                      iterator_category;
+        typedef typename ft::iterator<iterator_category, U>::value_type         value_type;
+        typedef typename ft::iterator<iterator_category, U>::pointer            pointer;
+        typedef typename ft::iterator<iterator_category, U>::reference          reference;
+        typedef typename ft::iterator<iterator_category, U>::difference_type    difference_type;
+
+        bidirectional_iterator_map():p(ft_nullptr) {}
+        bidirectional_iterator_map(const pointer it):p(it) {}
+        bidirectional_iterator_map(const bidirectional_iterator_map& other):p(other.p) {}
+        bidirectional_iterator_map& operator=(const bidirectional_iterator_map& other) {
+            p = other.p;
+            return *this;}
+        virtual ~bidirectional_iterator_map() {}
+
+        operator bidirectional_iterator_map<const value_type> () const {
+            return bidirectional_iterator_map<const value_type>(this->p);}
+
+        pointer base() const {return this->p;}
+
+        bidirectional_iterator_map&  operator++();
+        bidirectional_iterator_map   operator++(int);
+        bidirectional_iterator_map&  operator--();
+        bidirectional_iterator_map   operator--(int);
+
+        reference   operator*() {return p->data;}
+        pointer     operator->() {return p->data;}
+
+    protected:
+        pointer p;
+    };
+        typedef bidirectional_iterator_map<t_node<value_type> >          iterator;
+        typedef bidirectional_iterator_map<t_node<const value_type> >    const_iterator;
         typedef ft::reverse_iterator<iterator>                  reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
 
                     map();
         explicit    map(const Compare& comp,
-                        const Allocator& alloc = Allocator());
+                        const allocator_type& alloc = allocator_type());
         template <class InputIt>
                     map(InputIt first, InputIt last,
                         const Compare& comp = Compare(),
-                        const Allocator& alloc = Allocator());
+                        const allocator_type& alloc = allocator_type());
                     ~map();
 
         map&        operator=( const map& other );
@@ -65,15 +111,15 @@ namespace ft
 
         /*********[Modifiers]*********/
         void        clear();
-        std::pair<iterator, bool> insert(const value_type& value);
-        template< class P >
-            iterator    insert( iterator position, const value_type& value );
+        ft::pair<iterator, bool>
+                    insert(const value_type& value);
+        iterator    insert( iterator position, const value_type& value );
         template< class InputIt >
-            void        insert( InputIt first, InputIt last );
-        iterator        erase (iterator position);
-        iterator        erase (iterator first, iterator last);
-        size_type       erase(const Key& key);
-        void            swap (map& other);
+            void    insert( InputIt first, InputIt last );
+        iterator    erase (iterator position);
+        iterator    erase (iterator first, iterator last);
+        size_type   erase(const Key& key);
+        void        swap (map& other);
 
         /*********[Lookup]*********/
         size_type                                   count(const Key& key) const;
@@ -88,21 +134,33 @@ namespace ft
 
         /*********[Observers]*********/
         key_compare             key_comp() const;
-        ft::map::value_compare  value_comp() const;
+        // ft::map::value_compare  value_comp() const;
 
         class value_compare
         {
-        protected:
-            value_compare(Compare c);
+        // protected:
+        //     value_compare(Compare c);
 
-        public:
-            bool operator()(const value_type& lhs, const value_type& rhs) const
-            {
-                return comp(lhs.first, rhs.first);
-            }
+        // public:
+        //     bool operator()(const value_type& lhs, const value_type& rhs) const
+        //     {
+        //         return comp(lhs.first, rhs.first);
+        //     }
         };
 
-    private:
 
+
+    private:
+        typedef t_node<value_type>     node_type;
+
+        allocator_type  _alloc;
+        key_compare     _comp;
+        node_type*       _nil;
+        node_type*       _node_root;
+
+        node_type*   new_nil();
+        node_type*   new_node(node_type* parent, value_type value);
     };
 }
+
+#include "map_impl.hpp"
