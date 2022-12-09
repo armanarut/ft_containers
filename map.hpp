@@ -76,24 +76,24 @@ namespace ft
         void            swap (map& other);
 
         /*********[Lookup]*********/
-        size_type       count(const Key& key) const;
-        iterator        find(const Key& key);
-        const_iterator  find(const Key& key) const;
-        ft::pair<iterator,iterator>    equal_range(const Key& key);
-        ft::pair<const_iterator,const_iterator>    equal_range(const Key& key) const;
-        iterator lower_bound( const Key& key );
-        const_iterator lower_bound( const Key& key ) const;
-        iterator upper_bound( const Key& key );
-        const_iterator upper_bound( const Key& key ) const;
+        size_type                                   count(const Key& key) const;
+        iterator                                    find(const Key& key);
+        const_iterator                              find(const Key& key) const;
+        ft::pair<iterator,iterator>                 equal_range(const Key& key);
+        ft::pair<const_iterator,const_iterator>     equal_range(const Key& key) const;
+        iterator                                    lower_bound( const Key& key );
+        const_iterator                              lower_bound( const Key& key ) const;
+        iterator                                    upper_bound( const Key& key );
+        const_iterator                              upper_bound( const Key& key ) const;
 
         /*********[Observers]*********/
-        key_compare key_comp() const;
-        ft::map::value_compare value_comp() const;
+        key_compare             key_comp() const;
+        ft::map::value_compare  value_comp() const;
 
         class value_compare
         {
         protected:
-            value_compare( Compare c );
+            value_compare(Compare c);
 
         public:
             bool operator()(const value_type& lhs, const value_type& rhs) const

@@ -205,7 +205,7 @@ namespace ft
     typename vector<T, Allocator>::reference
         vector<T, Allocator>::operator[] (size_type n)
     {
-        if (n >= this->size())
+        if (n > this->size())
             throw (std::out_of_range("vector"));
         return *(_start + n);
     }
@@ -214,7 +214,7 @@ namespace ft
     typename vector<T, Allocator>::const_reference
         vector<T, Allocator>::operator[] (size_type n) const
     {
-        if (n >= this->size())
+        if (n > this->size())
             throw (std::out_of_range("vector"));
         return *(_start + n);
     }
