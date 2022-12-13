@@ -573,10 +573,10 @@ namespace ft
     }
 
     template <class T, class Alloc>
-        void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
+        void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs)
     {
-        ft::vector<T, Alloc> tmp(x);
-        x = y;
-        y = tmp;
+        ft::vector<T, Alloc> tmp(lhs);
+        lhs = rhs;
+        rhs = tmp;
     }
 }

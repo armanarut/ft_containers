@@ -9,11 +9,13 @@ namespace ft
 
 	template <class T1, class T2>
 	template <class U1, class U2>
-	pair<T1, T2>::pair(const pair<U1, U2> &p)
-	{
-		this->first = p.first;
-		this->second = p.second;
-	}
+	pair<T1, T2>::pair(const pair<U1, U2> &p):
+		first(p.first),
+		second(p.second) {}
+	// {
+	// 	this->first = p.first;
+	// 	this->second = p.second;
+	// }
 
 	template <class T1, class T2>
 	pair<T1, T2>::pair(const first_type &a, const second_type &b):
@@ -37,7 +39,7 @@ namespace ft
 	template <class T1, class T2>
 	bool operator==(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs)
 	{
-		return (lhs.first == rhs.first && lhs.seccond == rhs.seccond);
+		return (lhs.first == rhs.first && lhs.second == rhs.second);
 	}
 
 	template <class T1, class T2>
@@ -49,7 +51,7 @@ namespace ft
 	template <class T1, class T2>
 	bool operator<(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs)
 	{
-		return (lhs.first < rhs.first || (rhs.first < lhs.first && lhs.seccond < rhs.seccond));
+		return (lhs.first < rhs.first || (rhs.first < lhs.first && lhs.second < rhs.second));
 	}
 
 	template <class T1, class T2>

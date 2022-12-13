@@ -2,65 +2,6 @@
 
 namespace ft
 {
-
-    template <class Key, class T, class Compare, class Alloc>
-    template <class U>
-    typename ft::map<Key, T, Compare, Alloc>::template bidirectional_iterator_map<U>&
-        ft::map<Key, T, Compare, Alloc>::bidirectional_iterator_map<U>::operator++()
-    {
-        while (1)
-        {
-            if (p->right != _nil)
-            {
-                p = p->right;
-                while (p->left != _nil)
-                    p = p->left;
-                break ;
-            }
-            else
-            {
-                while (p == p->parent->right)
-                    p = p->parent;
-                if (p->parent != p->parent->parent)
-                    p = p->parent;
-                else
-                {
-                while (p->right != _nil)
-                    p = p->right;
-                    return _nil;
-                }
-            }
-        }
-        return p;
-    }
-
-    template <class Key, class T, class Compare, class Alloc>
-    template <class U>
-    typename ft::map<Key, T, Compare, Alloc>::template bidirectional_iterator_map<U>
-        ft::map<Key, T, Compare, Alloc>::bidirectional_iterator_map<U>::operator++(int)
-    {
-
-
-    }
-
-    template <class Key, class T, class Compare, class Alloc>
-    template <class U>
-    typename ft::map<Key, T, Compare, Alloc>::template bidirectional_iterator_map<U>&
-        ft::map<Key, T, Compare, Alloc>::bidirectional_iterator_map<U>::operator--()
-    {
-
-
-    }
-
-    template <class Key, class T, class Compare, class Alloc>
-    template <class U>
-    typename ft::map<Key, T, Compare, Alloc>::template bidirectional_iterator_map<U>
-        ft::map<Key, T, Compare, Alloc>::bidirectional_iterator_map<U>::operator--(int)
-    {
-
-
-    }
-
     template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>::map()
         :_alloc(allocator_type()),
@@ -88,43 +29,68 @@ namespace ft
     // {}
 
     template <class Key, class T, class Compare, class Alloc>
+    ft::map<Key, T, Compare, Alloc>::map(const map& other)
+        :_alloc(other.alloc),
+        _comp(ft_nullptr),
+        _nil(ft_nullptr),
+        _node_root(ft_nullptr) {*this = other;}
+
+    template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>::~map()
     {
         delete _nil;
     }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // ft::map<Key, T, Compare, Alloc>&
-    //     ft::map<Key, T, Compare, Alloc>::operator=(const map& other)
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    ft::map<Key, T, Compare, Alloc>&
+        ft::map<Key, T, Compare, Alloc>::operator=(const map& other)
+    {
+        //**********clear nodes here
 
-
-
-    //     return *this;
-    // }
+        _alloc = other._alloc;
+        _comp = other._comp;
+        _nil = other._nil;
+        _node_root = other._node_root;
+    
+        return *this;
+    }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::allocator_type 
         ft::map<Key, T, Compare, Alloc>::get_allocator() const
     { return allocator_type(); }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // T&          ft::map<Key, T, Compare, Alloc>::at(const Key& key)
-    // {
+    /********************[Element access]*******************/
 
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    T&          ft::map<Key, T, Compare, Alloc>::at(const Key& key)
+    {
+        typename ft::map<Key, T, Compare, Alloc>::iterator it = this->find(key);
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // const T&    ft::map<Key, T, Compare, Alloc>::at(const Key& key) const
-    // {
+        if (it == this->end())
+            throw (std::out_of_range("map"));
+        return it->data->second;
+    }
 
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    const T&    ft::map<Key, T, Compare, Alloc>::at(const Key& key) const
+    {
+        typename ft::map<Key, T, Compare, Alloc>::const_iterator it = this->find(key);
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // T&          ft::map<Key, T, Compare, Alloc>::operator[](const Key& key)
-    // {
-        
-    // }
+        if (it == this->end())
+            throw (std::out_of_range("map"));
+        return it->data->second;
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    T&          ft::map<Key, T, Compare, Alloc>::operator[](const Key& key)
+    {
+        typename ft::map<Key, T, Compare, Alloc>::iterator it = this->find(key);
+
+        if (it == this->end())
+            return insert(ft::make_pair(key, T())).first->second;
+        return it->data->second;
+    }
 
     /********************[Iterators]*******************/
 
@@ -184,9 +150,15 @@ namespace ft
 
     /********************[Modifiers]*******************/
 
+    // template <class Key, class T, class Compare, class Alloc>
+    // void    ft::map<Key, T, Compare, Alloc>::clear()
+    // {
+        
+    // }
+
     template <class Key, class T, class Compare, class Alloc>
     ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator, bool>
-        insert(const typename ft::map<Key, T, Compare, Alloc>::value_type& value)
+        ft::map<Key, T, Compare, Alloc>::insert(const typename ft::map<Key, T, Compare, Alloc>::value_type& value)
     {
         typename ft::map<Key, T, Compare, Alloc>::node_type*  tmp = _node_root;
         bool    success = false;
@@ -198,7 +170,7 @@ namespace ft
         }
         while (!success)
         {
-            if (tmp->data < value)
+            if (*tmp->data < value)
             {
                 if (tmp->right != _nil)
                     tmp = tmp->right;
@@ -208,7 +180,7 @@ namespace ft
                     success = true;
                 }
             }
-            else if (tmp->data != value)
+            else if (tmp->data->first != value.first)
             {
                 if (tmp->left != _nil)
                     tmp = tmp->left;
@@ -220,12 +192,164 @@ namespace ft
             }
             else break;
         }
-        return ft::pair<iterator, bool>(iterator(tmp, success));
+        return ft::pair<iterator, bool>(iterator(tmp), success);
     }
 
 
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::iterator
+    //      ft::map<Key, T, Compare, Alloc>::insert( iterator position,
+    //     const value_type& value )
+    // {
+
+    // }
 
 
+    // template <class Key, class T, class Compare, class Alloc>
+    // template< class InputIt >
+    // void    ft::map<Key, T, Compare, Alloc>::insert( InputIt first, InputIt last )
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::iterator
+    //     ft::map<Key, T, Compare, Alloc>::erase (iterator position)
+    // {
+        
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::iterator
+    //     ft::map<Key, T, Compare, Alloc>::erase (iterator first, iterator last)
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::size_type
+    //     ft::map<Key, T, Compare, Alloc>::erase(const Key& key)
+    // {
+        
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // void    ft::map<Key, T, Compare, Alloc>::swap (map& other)
+    // {
+
+    // }
+
+    /********************[Lookup]*******************/
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::size_type
+        ft::map<Key, T, Compare, Alloc>::count(const Key& key) const
+    {
+        typename ft::map<Key, T, Compare, Alloc>::iterator it = this->find(key);
+
+        return (it != this->end());
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+        ft::map<Key, T, Compare, Alloc>::find(const Key& key)
+    {
+        typename ft::map<Key, T, Compare, Alloc>::node_type*  tmp = _node_root;
+
+        while (tmp != _nil)
+        {
+            if (tmp->data->first < key)
+            {
+                if (tmp->right != _nil)
+                    tmp = tmp->right;
+                else break;
+            }
+            else if (tmp->data->first != key)
+            {
+                if (tmp->left != _nil)
+                    tmp = tmp->left;
+                else break;
+            }
+            else return iterator(tmp);
+        }
+        return this->end();
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator
+        ft::map<Key, T, Compare, Alloc>::find(const Key& key) const
+    {
+        typename ft::map<Key, T, Compare, Alloc>::node_type*  tmp = _node_root;
+
+        while (tmp != _nil)
+        {
+            if (tmp->data->first < key)
+            {
+                if (tmp->right != _nil)
+                    tmp = tmp->right;
+                else break;
+            }
+            else if (tmp->data->first != key)
+            {
+                if (tmp->left != _nil)
+                    tmp = tmp->left;
+                else break;
+            }
+            else return const_iterator(tmp);
+        }
+        return this->end();
+    }
+
+    // template <class Key, class T, class Compare, class Alloc>
+    // ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator,
+    //     typename ft::map<Key, T, Compare, Alloc>::iterator>
+    //     ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key)
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // ft::pair<typename ft::map<Key, T, Compare, Alloc>::const_iterator,
+    //     typename ft::map<Key, T, Compare, Alloc>::const_iterator>
+    //     ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key) const
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::iterator
+    //     ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key )
+    // {
+        
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::const_iterator
+    //     ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key ) const
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::iterator
+    //     ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key )
+    // {
+
+    // }
+    // template <class Key, class T, class Compare, class Alloc>
+    // typename ft::map<Key, T, Compare, Alloc>::const_iterator
+    //     ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key ) const
+    // {
+
+    // }
+
+    /********************[Observers]*******************/
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::key_compare
+        ft::map<Key, T, Compare, Alloc>::key_comp() const
+    { return key_compare(); }
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::value_compare
+        ft::map<Key, T, Compare, Alloc>::value_comp() const
+    {
+        return value_compare(typename ft::map<Key, T, Compare, Alloc>::key_compare());
+    }
+
+    /********************[Private functions]*******************/
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::node_type*
@@ -233,12 +357,13 @@ namespace ft
     {
         node_type* new_node = new node_type;
 
-        new_node->data = value;
+        new_node->data = _alloc.allocate(1);
+        _alloc.construct(new_node->data, value);
         new_node->parent = parent;
         new_node->left = _nil;
         new_node->right = _nil;
-        new_node->black = false;
-
+        new_node->color = RED;
+        new_node->leaf = true;
         return new_node;
     }
 
@@ -246,13 +371,68 @@ namespace ft
     typename ft::map<Key, T, Compare, Alloc>::node_type*
         ft::map<Key, T, Compare, Alloc>::new_nil()
     {
-        node_type*  new_node = node_type;
+        node_type*  new_node = new node_type;
 
+        new_node->data = ft::ft_nullptr;
         new_node->parent = ft::ft_nullptr;
         new_node->left = ft::ft_nullptr;
         new_node->right = ft::ft_nullptr;
-        new_node->black = true;
+        new_node->color = BLACK;
+        new_node->color = false;
 
         return new_node;
+    }
+
+    /********************[Non-Member functions]*******************/
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+        const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
+       const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return !(rhs < lhs);
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
+       const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return rhs < lhs;
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        const ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        return !(lhs < rhs);
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    void swap( ft::map<Key,T,Compare,Alloc>& lhs,
+           ft::map<Key,T,Compare,Alloc>& rhs )
+    {
+        ft::map<Key, T, Compare, Alloc> tmp(lhs);
+        lhs = rhs;
+        rhs = tmp;
     }
 }

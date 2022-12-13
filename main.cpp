@@ -32,8 +32,8 @@ struct Buffer
 	// constructors used in the same order as described above:
 	ft::map<int, int> temp;
 	
-	temp.insert(ft::make_pair(40, 0));
-	temp.insert(ft::make_pair(50, 0));
+	temp.insert(ft::make_pair(40, 41));
+	// temp.insert(ft::make_pair(50, 0));
 	ft::pair<ft::map<int, int>::iterator, bool> test = temp.insert(ft::make_pair(40, 111111111111));
 	// temp.insert(ft::make_pair(30, 0));
 	// temp.insert(ft::make_pair(50, 0));

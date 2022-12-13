@@ -2,22 +2,10 @@
 
 #include <functional>
 #include "pair.hpp"
-#include "iterator.hpp"
+#include "tree_iterator.hpp"
 
 namespace ft
 {
-    template <typename T>
-    struct t_node
-    {
-        typedef T   value_type;
-
-        value_type  data;
-        t_node*     parent;
-        t_node*     left;
-        t_node*     right;
-        bool        black;
-    };
-
     template<
         class Key,
         class T,
@@ -26,6 +14,7 @@ namespace ft
     > class map
     {
     public:
+        class                                                   value_compare;
         typedef Key                                             key_type;
         typedef T                                               mapped_type;
         typedef Compare                                         key_compare;
@@ -37,42 +26,8 @@ namespace ft
         typedef typename allocator_type::const_reference        const_reference;
         typedef typename allocator_type::pointer                pointer;
         typedef typename allocator_type::const_pointer          const_pointer;
-
-    template <class U>
-    struct bidirectional_iterator_map
-    {
-        typedef bidirectional_iterator_tag                                      iterator_category;
-        typedef typename ft::iterator<iterator_category, U>::value_type         value_type;
-        typedef typename ft::iterator<iterator_category, U>::pointer            pointer;
-        typedef typename ft::iterator<iterator_category, U>::reference          reference;
-        typedef typename ft::iterator<iterator_category, U>::difference_type    difference_type;
-
-        bidirectional_iterator_map():p(ft_nullptr) {}
-        bidirectional_iterator_map(const pointer it):p(it) {}
-        bidirectional_iterator_map(const bidirectional_iterator_map& other):p(other.p) {}
-        bidirectional_iterator_map& operator=(const bidirectional_iterator_map& other) {
-            p = other.p;
-            return *this;}
-        virtual ~bidirectional_iterator_map() {}
-
-        operator bidirectional_iterator_map<const value_type> () const {
-            return bidirectional_iterator_map<const value_type>(this->p);}
-
-        pointer base() const {return this->p;}
-
-        bidirectional_iterator_map&  operator++();
-        bidirectional_iterator_map   operator++(int);
-        bidirectional_iterator_map&  operator--();
-        bidirectional_iterator_map   operator--(int);
-
-        reference   operator*() {return p->data;}
-        pointer     operator->() {return p->data;}
-
-    protected:
-        pointer p;
-    };
-        typedef bidirectional_iterator_map<t_node<value_type> >          iterator;
-        typedef bidirectional_iterator_map<t_node<const value_type> >    const_iterator;
+        typedef tree_iterator_map<value_type>                   iterator;
+        typedef tree_iterator_map<const value_type>             const_iterator;
         typedef ft::reverse_iterator<iterator>                  reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
 
@@ -83,6 +38,7 @@ namespace ft
                     map(InputIt first, InputIt last,
                         const Compare& comp = Compare(),
                         const allocator_type& alloc = allocator_type());
+                    map(const map& other);
                     ~map();
 
         map&        operator=( const map& other );
@@ -134,18 +90,21 @@ namespace ft
 
         /*********[Observers]*********/
         key_compare             key_comp() const;
-        // ft::map::value_compare  value_comp() const;
+        value_compare  value_comp() const;
 
         class value_compare
         {
-        // protected:
-        //     value_compare(Compare c);
+            friend class map;
 
-        // public:
-        //     bool operator()(const value_type& lhs, const value_type& rhs) const
-        //     {
-        //         return comp(lhs.first, rhs.first);
-        //     }
+        protected:
+            Compare     comp;
+            value_compare(Compare c):comp(c) {}
+
+        public:
+            bool operator()(const value_type& lhs, const value_type& rhs) const
+            {
+                return comp(lhs.first, rhs.first);
+            }
         };
 
 
@@ -155,8 +114,8 @@ namespace ft
 
         allocator_type  _alloc;
         key_compare     _comp;
-        node_type*       _nil;
-        node_type*       _node_root;
+        node_type*      _nil;
+        node_type*      _node_root;
 
         node_type*   new_nil();
         node_type*   new_node(node_type* parent, value_type value);
