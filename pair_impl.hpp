@@ -12,10 +12,6 @@ namespace ft
 	pair<T1, T2>::pair(const pair<U1, U2> &p):
 		first(p.first),
 		second(p.second) {}
-	// {
-	// 	this->first = p.first;
-	// 	this->second = p.second;
-	// }
 
 	template <class T1, class T2>
 	pair<T1, T2>::pair(const first_type &a, const second_type &b):

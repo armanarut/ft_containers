@@ -1,8 +1,7 @@
 #pragma once
 
-#include <functional>
 #include "pair.hpp"
-#include "tree_iterator.hpp"
+#include "RBtree.hpp"
 
 namespace ft
 {
@@ -31,8 +30,7 @@ namespace ft
         typedef ft::reverse_iterator<iterator>                  reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
 
-                    map();
-        explicit    map(const Compare& comp,
+        explicit    map(const Compare& comp = key_compare(),
                         const allocator_type& alloc = allocator_type());
         template <class InputIt>
                     map(InputIt first, InputIt last,
@@ -107,18 +105,13 @@ namespace ft
             }
         };
 
-
-
     private:
-        typedef t_node<value_type>     node_type;
+        typedef RBnode<value_type>                                  node_type;
+        typedef RBtree<value_type, value_compare, allocator_type>   tree_type;
 
-        allocator_type  _alloc;
-        key_compare     _comp;
-        node_type*      _nil;
-        node_type*      _node_root;
+        tree_type  _tree;
 
-        node_type*   new_nil();
-        node_type*   new_node(node_type* parent, value_type value);
+        value_type get_value_type(const Key& key);
     };
 }
 

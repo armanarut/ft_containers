@@ -1,34 +1,36 @@
 #pragma once
 
-#include "iterator.hpp"
-
-#define BLACK   0;
-#define RED     1;
+#include "type_traits.hpp"
 
 namespace ft
 {
+    enum color_t {BLACK, RED};
+    #define LEFT  0
+    #define RIGHT 1
+    #define left  child[LEFT]
+    #define right child[RIGHT]
+    #define CHILD_DIR(N) ( N == (N->parent)->right ? RIGHT : LEFT )
+
     template <typename T>
-    struct t_node
+    struct RBnode
     {
         typedef T   value_type;
 
-        value_type* data;
-        t_node*     parent;
-        t_node*     left;
-        t_node*     right;
-        bool        color;
-        bool        leaf;
+        RBnode*         parent;
+        RBnode*         child[2];
+        enum color_t    color;
+        value_type*     data;
 
-        t_node& operator=(const t_node& other)
-        {
-            data = other.data;
-            parent = other.parent;
-            left = other.left;
-            right = other.right;
-            color = other.color;
-            leaf = other.leaf;
-            return *this;
-        }
+        // RBnode& operator=(const RBnode& other)
+        // {
+        //     data = other.data;
+        //     parent = other.parent;
+        //     left = other.left;
+        //     right = other.right;
+        //     color = other.color;
+        //     leaf = other.leaf;
+        //     return *this;
+        // }
     };
 
     template <class U>
@@ -39,7 +41,7 @@ namespace ft
         typedef typename ft::iterator<iterator_category, U>::pointer            pointer;
         typedef typename ft::iterator<iterator_category, U>::reference          reference;
         typedef typename ft::iterator<iterator_category, U>::difference_type    difference_type;
-        typedef t_node<value_type>                                                node_type;
+        typedef RBnode<value_type>                                                node_type;
 
         tree_iterator_map():_node(ft_nullptr) {}
         tree_iterator_map(node_type* it):_node(it) {}
@@ -56,30 +58,28 @@ namespace ft
 
         tree_iterator_map&  operator++()
         {
-        while (1)
-        {
-            if (_node->right->leaf)
+            if (_node->right)
             {
                 _node = _node->right;
-                while (_node->left->leaf)
+                while (_node->left)
                     _node = _node->left;
-                break ;
             }
             else
             {
-                while (_node == _node->parent->right)
-                    _node = _node->parent;
-                if (_node->parent != _node->parent->parent)
-                    _node = _node->parent;
-                else
+                node_type*  tmp = _node->parent;
+                while (_node == tmp->right)
                 {
-                while (_node->right->leaf)
-                    _node = _node->right;
-                    return _node->right;
+                    _node = tmp;
+                    tmp = _node->parent;
+                }
+                _node = tmp;
+                if (_node->parent == tmp->parent)
+                {
+                    while (_node->right)
+                        _node = _node->right;
                 }
             }
-        }
-        return _node;
+            return _node;
         }
 
         tree_iterator_map   operator++(int);
