@@ -7,8 +7,6 @@ namespace ft
     enum color_t {BLACK, RED};
     #define LEFT  0
     #define RIGHT 1
-    #define left  child[LEFT]
-    #define right child[RIGHT]
     #define CHILD_DIR(N) ( N == (N->parent)->right ? RIGHT : LEFT )
 
     template <typename T>
@@ -54,20 +52,20 @@ namespace ft
         operator tree_iterator_map<const value_type> () const {
             return tree_iterator_map<const value_type>(this->_node);}
 
-        pointer base() const {return this->_node;}
+        pointer base() const {return this->_node->data;}
 
         tree_iterator_map&  operator++()
         {
-            if (_node->right)
+            if (_node->child[RIGHT])
             {
-                _node = _node->right;
-                while (_node->left)
-                    _node = _node->left;
+                _node = _node->child[RIGHT];
+                while (_node->child[LEFT])
+                    _node = _node->child[LEFT];
             }
             else
             {
                 node_type*  tmp = _node->parent;
-                while (_node == tmp->right)
+                while (_node == tmp->child[RIGHT])
                 {
                     _node = tmp;
                     tmp = _node->parent;
@@ -75,15 +73,46 @@ namespace ft
                 _node = tmp;
                 if (_node->parent == tmp->parent)
                 {
-                    while (_node->right)
-                        _node = _node->right;
+                    while (_node->child[RIGHT])
+                        _node = _node->child[RIGHT];
                 }
             }
-            return _node;
-        }
+            return *this;
+        };
 
-        tree_iterator_map   operator++(int);
-        tree_iterator_map&  operator--();
+        tree_iterator_map   operator++(int)
+        {
+            node_type* last = _node;
+
+            if (_node->child[RIGHT])
+            {
+                _node = _node->child[RIGHT];
+                while (_node->child[LEFT])
+                    _node = _node->child[LEFT];
+            }
+            else
+            {
+                node_type*  tmp = _node->parent;
+                while (_node == tmp->child[RIGHT])
+                {
+                    _node = tmp;
+                    tmp = _node->parent;
+                }
+                _node = tmp;
+                if (_node->parent == tmp->parent)
+                {
+                    while (_node->child[RIGHT])
+                        _node = _node->child[RIGHT];
+                }
+            }
+            return tree_iterator_map(last);
+        };
+
+        tree_iterator_map&  operator--()
+        {
+            return *this;
+        };
+
         tree_iterator_map   operator--(int);
 
         reference   operator*() {return *_node->data;}
@@ -92,4 +121,89 @@ namespace ft
     protected:
         node_type* _node;
     };
+
+    template <class T>
+        bool    operator==(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() == rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator==(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() == rhs.base();
+    }
+
+    template <class T>
+        bool    operator!=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() != rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator!=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() != rhs.base();
+    }
+
+    template <class T>
+        bool    operator>(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() < rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator>(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() < rhs.base();
+    }
+
+    template <class T>
+        bool    operator>=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() <= rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator>=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() <= rhs.base();
+    }
+
+    template <class T>
+        bool    operator<(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() > rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator<(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() > rhs.base();
+    }
+
+    template <class T>
+        bool    operator<=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<T>& rhs)
+    {
+        return lhs.base() >= rhs.base();
+    }
+
+    template <class T, class U>
+        bool    operator<=(const ft::tree_iterator_map<T>& lhs, 
+        const ft::tree_iterator_map<U>& rhs)
+    {
+        return lhs.base() >= rhs.base();
+    }
+    
 }

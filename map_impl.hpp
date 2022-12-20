@@ -30,19 +30,13 @@ namespace ft
         // delete _nil;
     }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // ft::map<Key, T, Compare, Alloc>&
-    //     ft::map<Key, T, Compare, Alloc>::operator=(const map& other)
-    // {
-    //     //**********clear nodes here
-
-    //     _alloc = other._alloc;
-    //     _comp = other._comp;
-    //     _nil = other._nil;
-    //     _node_root = other._node_root;
-    
-    //     return *this;
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    ft::map<Key, T, Compare, Alloc>&
+        ft::map<Key, T, Compare, Alloc>::operator=(const map& other)
+    {
+        _tree = other._tree;
+        return *this;
+    }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::allocator_type 
@@ -58,7 +52,7 @@ namespace ft
 
         if (it == this->end())
             throw (std::out_of_range("map"));
-        return it->data->second;
+        return it->second;
     }
 
     template <class Key, class T, class Compare, class Alloc>
@@ -68,7 +62,7 @@ namespace ft
 
         if (it == this->end())
             throw (std::out_of_range("map"));
-        return it->data->second;
+        return it->second;
     }
 
     template <class Key, class T, class Compare, class Alloc>
@@ -78,7 +72,7 @@ namespace ft
 
         if (it == this->end())
             return insert(ft::make_pair(key, T())).first->second;
-        return it->data->second;
+        return it->second;
     }
 
     /********************[Iterators]*******************/
@@ -126,6 +120,28 @@ namespace ft
     typename ft::map<Key, T, Compare, Alloc>::const_reverse_iterator
         ft::map<Key, T, Compare, Alloc>::rend() const
     { return _tree.rend(); }
+
+    /********************[Capacity]*******************/
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::size_type
+        ft::map<Key, T, Compare, Alloc>::size() const
+    {
+        return _tree.size();
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    bool    ft::map<Key, T, Compare, Alloc>::empty() const
+    {
+        return _tree.empty();
+    }
+
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::size_type
+        ft::map<Key, T, Compare, Alloc>::max_size() const
+    {
+        return _tree.max_size();
+    }
 
     /********************[Modifiers]*******************/
 

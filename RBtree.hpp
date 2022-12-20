@@ -34,7 +34,13 @@ namespace ft
             _header(new_nil()) {};;
         ~RBtree() {delete _header;};
 
-        RBtree& operator=(const RBtree& other);
+        RBtree& operator=(const RBtree& other)
+        {
+            _alloc = other._alloc;
+            _comp = other._comp;
+            _header = other._header;
+            return *this;
+        };
 
         void        clear();
 
@@ -60,11 +66,14 @@ namespace ft
                     else
                     {
                         root->child[dir] = new_node(root, value);
+                        root = root->child[dir];
                         success = true;
                     }
                 }
                 else break;
             }
+            if (success)
+                insert_fixup(root);
             return ft::make_pair(iterator(root), success);
         };
 
@@ -75,86 +84,157 @@ namespace ft
         iterator    erase (iterator first, iterator last);
         size_type   erase(const value_type& value);
 
-    /********************[Iterators]*******************/
+        /********************[Iterators]*******************/
 
-    iterator    begin()
-    {
-        node_type*  root = _header->parent;
-
-        while (root->left)
-            root = root->left;
-        return iterator(root);
-    }
-
-    const_iterator  begin() const
-    {
-        node_type*  root = _header->parent;
-
-        while (root->left)
-            root = root->left;
-        return const_iterator(root);
-    }
-
-    iterator    end()
-    { return iterator(_header); }
-
-    const_iterator  end() const
-    { return const_iterator(_header); }
-
-    reverse_iterator    rbegin()
-    { return reverse_iterator(this->end()); }
-
-    const_reverse_iterator  rbegin() const
-    { return const_reverse_iterator(this->end()); }
-
-    reverse_iterator    rend()
-    { return reverse_iterator(this->begin()); }
-
-    const_reverse_iterator  rend() const
-    { return const_reverse_iterator(this->begin()); }
-
-    iterator    find(const value_type& value)
-    {
-        node_type*  root = _header->parent;
-
-        while (root)
+        iterator    begin()
         {
-            bool dir = _comp(*root->data, value);
-            if (dir || root->data->first != value.first)
-            {
-                if (root->child[dir])
-                    root = root->child[dir];
-                else break;
-            }
-            else return iterator(root);
+            node_type*  root = _header->parent;
+
+            while (root->child[LEFT])
+                root = root->child[LEFT];
+            return iterator(root);
         }
-        return this->end();
-    }
 
-    const_iterator    find(const value_type& value) const
-    {
-        node_type*  root = _header->parent;
-
-        while (root)
+        const_iterator  begin() const
         {
-            bool dir = _comp(*root->data, value);
-            if (dir || root->data->first != value.first)
-            {
-                if (root->child[dir])
-                    root = root->child[dir];
-                else break;
-            }
-            else return const_iterator(root);
+            node_type*  root = _header->parent;
+
+            while (root->child[LEFT])
+                root = root->child[LEFT];
+            return const_iterator(root);
         }
-        return this->end();
-    }
+
+        iterator    end()
+        { return iterator(_header); }
+
+        const_iterator  end() const
+        { return const_iterator(_header); }
+
+        reverse_iterator    rbegin()
+        { return reverse_iterator(this->end()); }
+
+        const_reverse_iterator  rbegin() const
+        { return const_reverse_iterator(this->end()); }
+
+        reverse_iterator    rend()
+        { return reverse_iterator(this->begin()); }
+
+        const_reverse_iterator  rend() const
+        { return const_reverse_iterator(this->begin()); }
+
+        /********************[Capacity]*******************/
+        
+        size_type   size() const
+        {
+            size_type   count = 0;
+            for (const_iterator it = this->begin(); it != this->end(); ++it)
+                ++count;
+            return count;
+        };
+
+        bool    empty() const
+        {
+            return _header->parent;
+        };
+
+        size_type   max_size() const
+        {
+            return _alloc.max_size();
+        }
+
+        /********************[Lookup]*******************/
+
+        iterator    find(const value_type& value)
+        {
+            node_type*  root = _header->parent;
+
+            while (root)
+            {
+                bool dir = _comp(*root->data, value);
+                if (dir || root->data->first != value.first)
+                {
+                    if (root->child[dir])
+                        root = root->child[dir];
+                    else break;
+                }
+                else return iterator(root);
+            }
+            return this->end();
+        }
+
+        const_iterator    find(const value_type& value) const
+        {
+            node_type*  root = _header->parent;
+
+            while (root)
+            {
+                bool dir = _comp(*root->data, value);
+                if (dir || root->data->first != value.first)
+                {
+                    if (root->child[dir])
+                        root = root->child[dir];
+                    else break;
+                }
+                else return const_iterator(root);
+            }
+            return this->end();
+        }
 
     protected:
         allocator_type  _alloc;
         value_compare     _comp;
         node_type* _header;
 
-        
+        # define RotateLeft(N)  rotate_dir(N, LEFT)
+        # define RotateRight(N)  rotate_dir(N, RIGHT)
+
+        void    insert_fixup(node_type* z)
+        {
+            while (z->parent->color == RED)
+            {
+                bool    dir = RIGHT;
+                if (z->parent == z->parent->parent->child[LEFT])
+                    dir = LEFT;
+                node_type* y = z->parent->parent->child[dir];
+                if (y && y->color == RED)
+                {
+                    z->parent->color = BLACK;
+                    y->color = BLACK;
+                    z->parent->parent->color = RED;
+                    z = z->parent->parent;
+                }
+                else if (z == z->parent->child[1 - dir])
+                {
+                    z = z->parent;
+                    rotate_dir(z, dir);
+                }
+                else
+                {
+                    z->parent->color = BLACK;
+                    z->parent->parent->color = RED;
+                    rotate_dir(z->parent->parent, 1 - dir);
+                }
+            }
+            _header->parent->color = BLACK;
+        }
+
+        void    rotate_dir(node_type* x, bool dir)
+        {
+            node_type*  y = x->child[1 - dir];
+            x->child[1 - dir] = y->child[dir];
+            if (y->child[dir])
+                y->child[dir]->parent = x;
+            y->parent = x->parent;
+            if (x->parent == _header)
+                _header->parent = y;
+            else if (x == x->parent->child[dir])
+                x->parent->child[dir] = y;
+            else
+                x->parent->child[1 - dir] = y;
+            y->child[dir] = x;
+            x->parent = y;
+        };
+
         node_type*  new_node(node_type* parent, value_type value)
         {
             node_type* new_node = new node_type;
@@ -162,8 +242,8 @@ namespace ft
             new_node->data = _alloc.allocate(1);
             _alloc.construct(new_node->data, value);
             new_node->parent = parent;
-            new_node->left = 0;
-            new_node->right = 0;
+            new_node->child[LEFT] = 0;
+            new_node->child[RIGHT] = 0;
             new_node->color = RED;
             return new_node;
         };
@@ -173,8 +253,8 @@ namespace ft
             node_type*  new_node = new node_type;
 
             new_node->parent = 0;
-            new_node->left = 0;
-            new_node->right = 0;
+            new_node->child[LEFT] = 0;
+            new_node->child[RIGHT] = 0;
             new_node->color = BLACK;
 
             return new_node;
