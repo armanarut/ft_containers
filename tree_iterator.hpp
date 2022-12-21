@@ -70,12 +70,8 @@ namespace ft
                     _node = tmp;
                     tmp = _node->parent;
                 }
-                _node = tmp;
-                if (_node->parent == tmp->parent)
-                {
-                    while (_node->child[RIGHT])
-                        _node = _node->child[RIGHT];
-                }
+                if (_node != tmp->parent)
+                    _node = tmp;
             }
             return *this;
         };
@@ -98,22 +94,75 @@ namespace ft
                     _node = tmp;
                     tmp = _node->parent;
                 }
-                _node = tmp;
-                if (_node->parent == tmp->parent)
-                {
-                    while (_node->child[RIGHT])
-                        _node = _node->child[RIGHT];
-                }
+                if (_node != tmp->parent)
+                    _node = tmp;
             }
             return tree_iterator_map(last);
         };
 
         tree_iterator_map&  operator--()
         {
+            if (_node->child[LEFT])
+            {
+                _node = _node->child[LEFT];
+                while (_node->child[RIGHT])
+                    _node = _node->child[RIGHT];
+            }
+            else
+            {
+                node_type*  tmp = _node->parent;
+                if (_node == tmp->parent && !_node->child[RIGHT] && !_node->child[LEFT])    // When _node is end()
+                {
+                    _node = tmp;
+                    while (_node->child[RIGHT])
+                        _node = _node->child[RIGHT];
+                }
+                else
+                {
+                    while (_node == tmp->child[LEFT])
+                    {
+                        _node = tmp;
+                        tmp = _node->parent;
+                    }
+                    if (_node != tmp->parent)
+                        _node = tmp;
+                }
+            }
             return *this;
         };
 
-        tree_iterator_map   operator--(int);
+        tree_iterator_map   operator--(int)
+        {
+            node_type* last = _node;
+
+            if (_node->child[LEFT])
+            {
+                _node = _node->child[LEFT];
+                while (_node->child[RIGHT])
+                    _node = _node->child[RIGHT];
+            }
+            else
+            {
+                node_type*  tmp = _node->parent;
+                if (_node == tmp->parent && !_node->child[RIGHT] && !_node->child[LEFT])    // When _node is end()
+                {
+                    _node = tmp;
+                    while (_node->child[RIGHT])
+                        _node = _node->child[RIGHT];
+                }
+                else
+                {
+                    while (_node == tmp->child[LEFT])
+                    {
+                        _node = tmp;
+                        tmp = _node->parent;
+                    }
+                    if (_node != tmp->parent)
+                        _node = tmp;
+                }
+            }
+            return tree_iterator_map(last);
+        };
 
         reference   operator*() {return *_node->data;}
         pointer     operator->() {return _node->data;}
