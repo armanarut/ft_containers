@@ -7,28 +7,22 @@ namespace ft
         :_tree(comp, alloc)
     {}
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // template <class InputIt>
-    // ft::map<Key, T, Compare, Alloc>::map(InputIt first, InputIt last,
-    //     const Compare& comp, const allocator_type& alloc)
-    //     :_alloc(alloc),
-    //     _comp(comp),
-    //     _nil(new_nil()),
-    //     _node_root(_nil)
-    // {}
+    template <class Key, class T, class Compare, class Alloc>
+    template <class InputIt>
+    ft::map<Key, T, Compare, Alloc>::map(InputIt first, InputIt last,
+        const Compare& comp, const allocator_type& alloc)
+        :_tree(comp, alloc)
+    {
+        insert(first, last);
+    }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // ft::map<Key, T, Compare, Alloc>::map(const map& other)
-    //     :_alloc(other.alloc),
-    //     _comp(ft_nullptr),
-    //     _nil(ft_nullptr),
-    //     _node_root(ft_nullptr) {*this = other;}
+    template <class Key, class T, class Compare, class Alloc>
+    ft::map<Key, T, Compare, Alloc>::map(const map& other)
+        :_tree(ft_nullptr) {*this = other;}
 
     template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>::~map()
-    {
-        // delete _nil;
-    }
+    {}
 
     template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>&
@@ -145,11 +139,11 @@ namespace ft
 
     /********************[Modifiers]*******************/
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // void    ft::map<Key, T, Compare, Alloc>::clear()
-    // {
-        
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    void    ft::map<Key, T, Compare, Alloc>::clear()
+    {
+        /*****************************************************************************************************/
+    }
 
     template <class Key, class T, class Compare, class Alloc>
     ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator, bool>
@@ -158,45 +152,63 @@ namespace ft
         return _tree.insert(value);
     }
 
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+         ft::map<Key, T, Compare, Alloc>::insert( iterator position,
+        const value_type& value )
+    {
+        (void)position;
+        ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator, bool> it = insert(value);
+        return it->first;
+    }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::iterator
-    //      ft::map<Key, T, Compare, Alloc>::insert( iterator position,
-    //     const value_type& value )
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    template< class InputIt >
+    void    ft::map<Key, T, Compare, Alloc>::insert( InputIt first, InputIt last )
+    {
+        while (first != last)
+        {
+            insert(*first);
+            ++first;
+        }
+    }
 
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    void    ft::map<Key, T, Compare, Alloc>::erase (iterator position)
+    {
+        return _tree.delete_node(position.base());
+    }
 
+    template <class Key, class T, class Compare, class Alloc>
+    void    ft::map<Key, T, Compare, Alloc>::erase (iterator first, iterator last)
+    {
+        node_type* it;
+        while (first != last)
+        {
+            it = _tree.delete_node(first.base());
+            ++first;
+        }
+        return it;
+    }
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::size_type
+        ft::map<Key, T, Compare, Alloc>::erase(const Key& key)
+    {
+        iterator it = find(key);
+        if (it == end())
+            return 0;
+        else
+            erase(it);
+        return 1;
+    }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // template< class InputIt >
-    // void    ft::map<Key, T, Compare, Alloc>::insert( InputIt first, InputIt last )
-    // {
-
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::iterator
-    //     ft::map<Key, T, Compare, Alloc>::erase (iterator position)
-    // {
-        
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::iterator
-    //     ft::map<Key, T, Compare, Alloc>::erase (iterator first, iterator last)
-    // {
-
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::size_type
-    //     ft::map<Key, T, Compare, Alloc>::erase(const Key& key)
-    // {
-        
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // void    ft::map<Key, T, Compare, Alloc>::swap (map& other)
-    // {
-
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    void    ft::map<Key, T, Compare, Alloc>::swap (map& other)
+    {
+        typename ft::map<Key, T, Compare, Alloc>::tree_type buff = _tree;
+        _tree = other._tree;
+        other._tree = buff;
+    }
 
     /********************[Lookup]*******************/
 
@@ -223,44 +235,49 @@ namespace ft
         return _tree.find(get_value_type(key));
     }
 
-    // template <class Key, class T, class Compare, class Alloc>
-    // ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator,
-    //     typename ft::map<Key, T, Compare, Alloc>::iterator>
-    //     ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key)
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator,
+        typename ft::map<Key, T, Compare, Alloc>::iterator>
+        ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key)
+    {
+        return _tree.equal_range(get_value_type(key));
+    }
 
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // ft::pair<typename ft::map<Key, T, Compare, Alloc>::const_iterator,
-    //     typename ft::map<Key, T, Compare, Alloc>::const_iterator>
-    //     ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key) const
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    ft::pair<typename ft::map<Key, T, Compare, Alloc>::const_iterator,
+        typename ft::map<Key, T, Compare, Alloc>::const_iterator>
+        ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key) const
+    {
+        return _tree.equal_range(get_value_type(key));
+    }
 
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::iterator
-    //     ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key )
-    // {
-        
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::const_iterator
-    //     ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key ) const
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+        ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key )
+    {
+        return _tree.lower_bound(get_value_type(key));
+    }
 
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::iterator
-    //     ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key )
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator
+        ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key ) const
+    {
+        return _tree.lower_bound(get_value_type(key));
+    }
 
-    // }
-    // template <class Key, class T, class Compare, class Alloc>
-    // typename ft::map<Key, T, Compare, Alloc>::const_iterator
-    //     ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key ) const
-    // {
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+        ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key )
+    {
+        return _tree.upper_bound(get_value_type(key));
+    }
 
-    // }
+    template <class Key, class T, class Compare, class Alloc>
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator
+        ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key ) const
+    {
+        return _tree.upper_bound(get_value_type(key));
+    }
 
     /********************[Observers]*******************/
 
@@ -280,12 +297,6 @@ namespace ft
 
 
 
-    template <class Key, class T, class Compare, class Alloc>
-        typename ft::map<Key, T, Compare, Alloc>::value_type 
-        get_value_type(const Key& key)
-    {
-        return ft::make_pair(key, typename ft::map<Key, T, Compare, Alloc>::mapped_type());
-    }
 
     /********************[Non-Member functions]*******************/
 

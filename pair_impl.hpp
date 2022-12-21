@@ -21,8 +21,8 @@ namespace ft
 	template <class T1, class T2>
 	pair<T1, T2>& pair<T1, T2>::operator=(const pair<T1, T2> &pr)
 	{
-		this->first = pr.first;
-		this->second = pr.second;
+		first = pr.first;
+		second = pr.second;
 		return *this;
 	}
 

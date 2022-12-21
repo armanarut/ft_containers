@@ -69,8 +69,8 @@ namespace ft
         iterator    insert( iterator position, const value_type& value );
         template< class InputIt >
             void    insert( InputIt first, InputIt last );
-        iterator    erase (iterator position);
-        iterator    erase (iterator first, iterator last);
+        void        erase (iterator position);
+        void        erase (iterator first, iterator last);
         size_type   erase(const Key& key);
         void        swap (map& other);
 
@@ -110,7 +110,8 @@ namespace ft
 
         tree_type  _tree;
 
-        value_type get_value_type(const Key& key);
+        value_type get_value_type(const Key& key) const
+        { return ft::make_pair(key, mapped_type()); }
     };
 }
 
