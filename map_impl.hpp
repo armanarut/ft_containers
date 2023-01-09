@@ -159,7 +159,7 @@ namespace ft
     {
         (void)position;
         ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator, bool> it = insert(value);
-        return it->first;
+        return it.first;
     }
 
     template <class Key, class T, class Compare, class Alloc>
@@ -174,21 +174,24 @@ namespace ft
     }
 
     template <class Key, class T, class Compare, class Alloc>
-    void    ft::map<Key, T, Compare, Alloc>::erase (iterator position)
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+        ft::map<Key, T, Compare, Alloc>::erase (iterator position)
     {
         return _tree.delete_node(position.base());
     }
 
     template <class Key, class T, class Compare, class Alloc>
-    void    ft::map<Key, T, Compare, Alloc>::erase (iterator first, iterator last)
+    typename ft::map<Key, T, Compare, Alloc>::iterator
+        ft::map<Key, T, Compare, Alloc>::erase (iterator first, iterator last)
     {
-        node_type* it;
+        iterator it;
+        
         while (first != last)
         {
-            it = _tree.delete_node(first.base());
-            ++first;
+            it = first++;
+            _tree.delete_node(it.base());
         }
-        return it;
+        return first;
     }
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::size_type
@@ -216,7 +219,7 @@ namespace ft
     typename ft::map<Key, T, Compare, Alloc>::size_type
         ft::map<Key, T, Compare, Alloc>::count(const Key& key) const
     {
-        typename ft::map<Key, T, Compare, Alloc>::iterator it = this->find(key);
+        typename ft::map<Key, T, Compare, Alloc>::const_iterator it = this->find(key);
 
         return (it != this->end());
     }

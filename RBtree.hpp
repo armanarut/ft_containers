@@ -79,12 +79,14 @@ namespace ft
                 insert_fixup(root);
                 ++_size;
             }
+            // print_tree();
             return ft::make_pair(iterator(root), success);
         };
 
         iterator    delete_node(node_type* z)
         {
-            node_type* y, x;
+            node_type* y;
+            node_type* x;
             bool color;
 
             y = z;
@@ -104,9 +106,7 @@ namespace ft
                 y = min_node(z->child[RIGHT]);
                 color = y->color;
                 x = y->child[RIGHT];
-                if (y->parent == z)
-                    x->parent = y;
-                else
+                if (y->parent != z)
                 {
                     transplant(y, y->child[RIGHT]);
                     y->child[RIGHT] = z->child[RIGHT];
@@ -122,7 +122,11 @@ namespace ft
             if (color == BLACK)
                 delete_fixup(x);
             --_size;
-            return iterator(x);
+
+            if (x)
+                return iterator(x);
+            else
+                return this->end();
         }
 
         /********************[Iterators]*******************/
@@ -131,6 +135,8 @@ namespace ft
         {
             node_type*  root = _header->parent;
 
+            if (!root)
+                return this->end();
             while (root->child[LEFT])
                 root = root->child[LEFT];
             return iterator(root);
@@ -140,6 +146,8 @@ namespace ft
         {
             node_type*  root = _header->parent;
 
+            if (!root)
+                return this->end();
             while (root->child[LEFT])
                 root = root->child[LEFT];
             return iterator(root);
@@ -206,7 +214,7 @@ namespace ft
                         root = root->child[dir];
                     else break;
                 }
-                else return const_iterator(root);
+                else return iterator(root);
             }
             return this->end();
         }
@@ -273,7 +281,7 @@ namespace ft
                 bool    dir = RIGHT;
                 if (z->parent == z->parent->parent->child[LEFT])
                     dir = LEFT;
-                node_type* y = z->parent->parent->child[dir];
+                node_type* y = z->parent->parent->child[1 - dir];
                 if (y && y->color == RED)
                 {
                     z->parent->color = BLACK;
@@ -281,13 +289,13 @@ namespace ft
                     z->parent->parent->color = RED;
                     z = z->parent->parent;
                 }
-                else if (z == z->parent->child[1 - dir])
-                {
-                    z = z->parent;
-                    rotate_dir(z, dir);
-                }
                 else
                 {
+                    if (z == z->parent->child[1 - dir])
+                    {
+                        z = z->parent;
+                        rotate_dir(z, dir);
+                    }
                     z->parent->color = BLACK;
                     z->parent->parent->color = RED;
                     rotate_dir(z->parent->parent, 1 - dir);
@@ -298,12 +306,13 @@ namespace ft
 
         void    delete_fixup(node_type* x)
         {
-            while (x != _header->parent && x->parent->color == RED)
+            while (x && x != _header->parent && x->color == BLACK)
             {
                 bool    dir = RIGHT;
                 if (x == x->parent->child[LEFT])
                     dir = LEFT;
                 node_type* y = x->parent->child[1 - dir];
+
                 if (y && y->color == RED)
                 {
                     y->color = BLACK;
@@ -312,30 +321,49 @@ namespace ft
                     x->parent->parent->color = RED;
                     y = x->parent->child[1 - dir];
                 }
-                if ((!y->child[dir] || y->child[dir]->color == BLACK)   \
+                if (y && (!y->child[dir] || y->child[dir]->color == BLACK)   \
                     && (!y->child[dir] || y->child[1 - dir]->color == BLACK))
                 {
                     y->color = RED;
                     x = x->parent;
                 }
-                else if (!y->child[dir] || y->child[1 - dir]->color == BLACK)
-                {
-                    y->child[dir]->color = BLACK;
-                    y->color = RED;
-                    rotate_dir(y, 1 - dir);
-                    y = x->parent->child[1 - dir];
-                }
                 else
                 {
-                    y->color = x->parent->color;
+                    if (y && (!y->child[dir] || y->child[1 - dir]->color == BLACK))
+                    {
+                        y->child[dir]->color = BLACK;
+                        y->color = RED;
+                        rotate_dir(y, 1 - dir);
+                        y = x->parent->child[1 - dir];
+                    }
+                    if (y)
+                    {
+                        y->color = x->parent->color;
+                        y->child[1 - dir]->color = BLACK;
+                    }
                     x->parent->color = BLACK;
-                    y->child[1 - dir]->color = BLACK;
                     rotate_dir(x->parent, dir);
                     x = _header->parent;
                 }
             }
             if (x)
                 x->color = BLACK;
+        }
+
+        void    print_tree()
+        {
+            int id = 0;
+            iterator it = begin();
+
+            std::cout << "________________tree_________________\n";
+            std::cout << "      root = " << _header->parent->data.first << std::endl;
+
+            while (it != end())
+            {
+                std::cout << ++id << ". " << (*it).first << (it.base()->color ? " red" :" black") << std::endl;
+                ++it;
+            }
+            std::cout << "_____________________________________\n";
         }
 
         void    rotate_dir(node_type* x, bool dir)

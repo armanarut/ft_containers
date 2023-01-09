@@ -69,8 +69,8 @@ namespace ft
         iterator    insert( iterator position, const value_type& value );
         template< class InputIt >
             void    insert( InputIt first, InputIt last );
-        void        erase (iterator position);
-        void        erase (iterator first, iterator last);
+        iterator        erase (iterator position);
+        iterator        erase (iterator first, iterator last);
         size_type   erase(const Key& key);
         void        swap (map& other);
 
