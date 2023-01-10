@@ -245,8 +245,8 @@ namespace ft
         reverse_iterator&  operator+=(difference_type x) {p -= x; return *this;}
         reverse_iterator&  operator-=(difference_type x) {p += x; return *this;}
 
-        reference   operator*() {return *(p.base() - 1);}
-        pointer     operator->() {return (p.base() - 1);}
+        reference   operator*() const {iterator_type	tmp = p;    return *(--tmp);}
+        pointer     operator->() const {return &(operator*());}
         reference   operator[](const difference_type x) {return *(p - x - 1);}
 
     protected:

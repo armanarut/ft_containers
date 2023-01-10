@@ -33,18 +33,38 @@ namespace ft
             _comp(comp),
             _header(new_nil()),
             _size(0) {};;
-        ~RBtree() {delete _header;};
+
+        ~RBtree()
+        {
+            this->clear();
+            _alloc.deallocate(_header, 1);
+        };
 
         RBtree& operator=(const RBtree& other)
         {
+            this->clear();
             _alloc = other._alloc;
             _comp = other._comp;
-            _header = other._header;
-            _size = other._size;
+            insert(other.begin(), other.end());
             return *this;
         };
 
-        void        clear();
+        void        clear()
+        {
+            this->remove_node(_header->parent);
+            _header->parent = NULL;
+            _size = 0;
+        }
+
+        template< class InputIt >
+        void    insert( InputIt first, InputIt last )
+        {
+            while (first != last)
+            {
+                insert(*first);
+                ++first;
+            }
+        }
 
         ft::pair<iterator, bool>
                     insert(const value_type& value)
@@ -82,6 +102,17 @@ namespace ft
             // print_tree();
             return ft::make_pair(iterator(root), success);
         };
+
+        void swap (RBtree& other)
+        {
+        node_type*  tmp1 = _header;
+        size_type   tmp2 = _size;
+
+        _header = other._header;
+        _size = other._size;
+        other._header = tmp1;
+        other._size = tmp2;
+        }
 
         iterator    delete_node(node_type* z)
         {
@@ -180,7 +211,7 @@ namespace ft
 
         bool    empty() const
         {
-            return _size;
+            return !_size;
         };
 
         size_type   max_size() const
@@ -266,10 +297,10 @@ namespace ft
         }
 
     protected:
-        allocator_type  _alloc;
-        value_compare     _comp;
-        node_type* _header;
-        size_type   _size;
+        allocator_type          _alloc;
+        value_compare           _comp;
+        node_type*              _header;
+        size_type               _size;
 
         #define RotateLeft(N)  rotate_dir(N, LEFT)
         #define RotateRight(N)  rotate_dir(N, RIGHT)
@@ -441,6 +472,18 @@ namespace ft
             new_node->color = BLACK;
 
             return new_node;
+        };
+
+        void    remove_node(node_type* node)
+        {
+            if (!node)
+                return ;
+            if (node->child[LEFT])
+                remove_node(node->child[LEFT]);
+            if (node->child[RIGHT])
+                remove_node(node->child[RIGHT]);
+            _alloc.destroy(node);
+            _alloc.deallocate(node, 1);
         };
     };
 

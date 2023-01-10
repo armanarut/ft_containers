@@ -18,7 +18,7 @@ namespace ft
 
     template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>::map(const map& other)
-        :_tree(ft_nullptr) {*this = other;}
+        :_tree(Compare(), Alloc()) {*this = other;}
 
     template <class Key, class T, class Compare, class Alloc>
     ft::map<Key, T, Compare, Alloc>::~map()
@@ -142,7 +142,7 @@ namespace ft
     template <class Key, class T, class Compare, class Alloc>
     void    ft::map<Key, T, Compare, Alloc>::clear()
     {
-        /*****************************************************************************************************/
+        _tree.clear();
     }
 
     template <class Key, class T, class Compare, class Alloc>
@@ -208,9 +208,10 @@ namespace ft
     template <class Key, class T, class Compare, class Alloc>
     void    ft::map<Key, T, Compare, Alloc>::swap (map& other)
     {
-        typename ft::map<Key, T, Compare, Alloc>::tree_type buff = _tree;
-        _tree = other._tree;
-        other._tree = buff;
+        _tree.swap(other._tree);
+        // typename ft::map<Key, T, Compare, Alloc>::tree_type buff = _tree;
+        // _tree = other._tree;
+        // other._tree = buff;
     }
 
     /********************[Lookup]*******************/
@@ -307,6 +308,7 @@ namespace ft
     bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
         const ft::map<Key,T,Compare,Alloc>& rhs )
     {
+        if ( lhs.size() != rhs.size() ) return false;
         return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
     }
 

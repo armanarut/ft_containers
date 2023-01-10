@@ -21,15 +21,14 @@ namespace ft
 
         RBnode(){};
         RBnode(value_type data):data(data){};
-
+    
         // RBnode& operator=(const RBnode& other)
         // {
-        //     data = other.data;
         //     parent = other.parent;
-        //     left = other.left;
-        //     right = other.right;
+        //     child[LEFT] = other.child[LEFT];
+        //     child[RIGHT] = other.child[RIGHT];
         //     color = other.color;
-        //     leaf = other.leaf;
+        //     data = other.data;
         //     return *this;
         // }
     };
