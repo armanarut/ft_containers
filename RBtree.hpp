@@ -11,20 +11,20 @@ namespace ft
         class Alloc = std::allocator<T>
     > struct RBtree
     {
-        typedef T                                               value_type;
-        typedef RBnode<value_type>                              node_type;
-        typedef Compare                                         value_compare;
-        typedef typename Alloc::template rebind<node_type>::other allocator_type;
-        typedef typename allocator_type::size_type              size_type;
-        typedef typename allocator_type::difference_type        difference_type;
-        typedef typename allocator_type::reference              reference;
-        typedef typename allocator_type::const_reference        const_reference;
-        typedef typename allocator_type::pointer                pointer;
-        typedef typename allocator_type::const_pointer          const_pointer;
-        typedef tree_iterator_map<value_type>                   iterator;
-        typedef tree_iterator_map<const value_type>             const_iterator;
-        typedef ft::reverse_iterator<iterator>                  reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
+        typedef T                                                   value_type;
+        typedef RBnode<value_type>                                  node_type;
+        typedef Compare                                             value_compare;
+        typedef typename Alloc::template rebind<node_type>::other   allocator_type;
+        typedef typename allocator_type::size_type                  size_type;
+        typedef typename allocator_type::difference_type            difference_type;
+        typedef typename allocator_type::reference                  reference;
+        typedef typename allocator_type::const_reference            const_reference;
+        typedef typename allocator_type::pointer                    pointer;
+        typedef typename allocator_type::const_pointer              const_pointer;
+        typedef tree_iterator<value_type>                           iterator;
+        typedef tree_iterator<const value_type>                     const_iterator;
+        typedef ft::reverse_iterator<iterator>                      reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>                const_reverse_iterator;
 
 
         explicit    RBtree(const value_compare& comp,
@@ -49,7 +49,9 @@ namespace ft
             return *this;
         };
 
-        void        clear()
+        /********************[Modifiers]*******************/
+
+        void    clear()
         {
             this->remove_node(_header->parent);
             _header->parent = NULL;
@@ -67,10 +69,10 @@ namespace ft
         }
 
         ft::pair<iterator, bool>
-                    insert(const value_type& value)
+                insert(const value_type& value)
         {
             node_type*  root = _header->parent;
-            bool    success = false;
+            bool        success = false;
 
             if (root == 0)
             {
@@ -81,7 +83,7 @@ namespace ft
             while (!success)
             {
                 bool dir = _comp(root->data, value);
-                if (dir || root->data.first != value.first)
+                if (dir || _comp(value, root->data))
                 {
                     if (root->child[dir] != 0)
                         root = root->child[dir];
@@ -99,26 +101,25 @@ namespace ft
                 insert_fixup(root);
                 ++_size;
             }
-            // print_tree();
             return ft::make_pair(iterator(root), success);
         };
 
-        void swap (RBtree& other)
+        void    swap (RBtree& other)
         {
-        node_type*  tmp1 = _header;
-        size_type   tmp2 = _size;
+            node_type*  tmp1 = _header;
+            size_type   tmp2 = _size;
 
-        _header = other._header;
-        _size = other._size;
-        other._header = tmp1;
-        other._size = tmp2;
+            _header = other._header;
+            _size = other._size;
+            other._header = tmp1;
+            other._size = tmp2;
         }
 
         iterator    delete_node(node_type* z)
         {
-            node_type* y;
-            node_type* x;
-            bool color;
+            node_type*  y;
+            node_type*  x;
+            bool        color;
 
             y = z;
             color = y->color;
@@ -153,7 +154,8 @@ namespace ft
             if (color == BLACK)
                 delete_fixup(x);
             --_size;
-
+            _alloc.destroy(z);
+            _alloc.deallocate(z, 1);
             if (x)
                 return iterator(x);
             else
@@ -239,7 +241,7 @@ namespace ft
             while (root)
             {
                 bool dir = _comp(root->data, value);
-                if (dir || root->data.first != value.first)
+                if (dir || _comp(value, root->data))
                 {
                     if (root->child[dir])
                         root = root->child[dir];
@@ -264,7 +266,7 @@ namespace ft
         {
             iterator it = begin();
 
-            while (_comp(*it, value) && it != end())
+            while (it != end() && _comp(*it, value))
                 ++it;
             return it;
         }
@@ -273,7 +275,7 @@ namespace ft
         {
             const_iterator it = begin();
 
-            while (_comp(*it, value) && it != end())
+            while (it != end() && _comp(*it, value))
                 ++it;
             return it;
         }
@@ -282,18 +284,28 @@ namespace ft
         {
             iterator it = end();
 
-            while (_comp(value, *it) && it != begin())
-                --it;
-            return it;
+            if (it != begin())
+                while (_comp(value, *(--it)))
+                    if (it == begin())
+                        return it;
+            if (it == end())
+                return it;
+            else
+                return ++it;
         }
 
         const_iterator                              upper_bound( const value_type& value ) const
         {
             const_iterator it = end();
 
-            while (_comp(value, *it) && it != begin())
-                --it;
-            return it;
+            if (it != begin())
+                while (_comp(value, *(--it)))
+                    if (it == begin())
+                        return it;
+            if (it == end())
+                return it;
+            else
+                return ++it;
         }
 
     protected:
@@ -353,14 +365,14 @@ namespace ft
                     y = x->parent->child[1 - dir];
                 }
                 if (y && (!y->child[dir] || y->child[dir]->color == BLACK)   \
-                    && (!y->child[dir] || y->child[1 - dir]->color == BLACK))
+                    && (!y->child[dir] || !y->child[1 - dir] || y->child[1 - dir]->color == BLACK))
                 {
                     y->color = RED;
                     x = x->parent;
                 }
                 else
                 {
-                    if (y && (!y->child[dir] || y->child[1 - dir]->color == BLACK))
+                    if (y && (!y->child[dir] || !y->child[1 - dir] || y->child[1 - dir]->color == BLACK))
                     {
                         y->child[dir]->color = BLACK;
                         y->color = RED;
@@ -381,21 +393,37 @@ namespace ft
                 x->color = BLACK;
         }
 
-        void    print_tree()
-        {
-            int id = 0;
-            iterator it = begin();
+        // void    print_set()
+        // {
+        //     int id = 0;
+        //     iterator it = begin();
 
-            std::cout << "________________tree_________________\n";
-            std::cout << "      root = " << _header->parent->data.first << std::endl;
+        //     std::cout << "________________tree_________________\n";
+        //     std::cout << "      root = " << _header->parent->data << "  size = " << size()<< std::endl;
 
-            while (it != end())
-            {
-                std::cout << ++id << ". " << (*it).first << (it.base()->color ? " red" :" black") << std::endl;
-                ++it;
-            }
-            std::cout << "_____________________________________\n";
-        }
+        //     while (it != end())
+        //     {
+        //         std::cout << ++id << ". " << (*it) << (it.base()->color ? " red" :" black") << std::endl;
+        //         ++it;
+        //     }
+        //     std::cout << "_____________________________________\n";
+        // }
+
+        // void    print_map()
+        // {
+        //     int id = 0;
+        //     iterator it = begin();
+
+        //     std::cout << "________________tree_________________\n";
+        //     std::cout << "      root = " << _header->parent->data.first << "  size = " << size()<< std::endl;
+
+        //     while (it != end())
+        //     {
+        //         std::cout << ++id << ". " << (*it).first << (it.base()->color ? " red" :" black") << std::endl;
+        //         ++it;
+        //     }
+        //     std::cout << "_____________________________________\n";
+        // }
 
         void    rotate_dir(node_type* x, bool dir)
         {
@@ -416,12 +444,12 @@ namespace ft
 
         node_type*  search_node(node_type* x, const value_type& value)
         {
-            if (!x || x->data.first == value.first)
-                return x;
-            if (_comp(value, x->data))
+            if (x && _comp(value, x->data))
                 return search_node(x->child[LEFT], value);
-            else
+            else if (x && _comp(x->data, value))
                 return search_node(x->child[RIGHT], value);
+            else
+                return x;
         }
 
         void    transplant(node_type* u, node_type* v)

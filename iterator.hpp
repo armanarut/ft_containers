@@ -8,7 +8,7 @@ namespace ft
     template <class T>
     struct bidirectional_iterator
     {
-        typedef bidirectional_iterator_tag                                      iterator_category;
+        typedef std::bidirectional_iterator_tag                                 iterator_category;
         typedef typename ft::iterator<iterator_category, T>::value_type         value_type;
         typedef typename ft::iterator<iterator_category, T>::pointer            pointer;
         typedef typename ft::iterator<iterator_category, T>::reference          reference;
@@ -42,7 +42,7 @@ namespace ft
     template <class T>
     struct random_access_iterator: public bidirectional_iterator<T>
     {
-        typedef random_access_iterator_tag                                      iterator_category;
+        typedef std::random_access_iterator_tag                                 iterator_category;
         typedef typename ft::iterator<iterator_category, T>::value_type         value_type;
         typedef typename ft::iterator<iterator_category, T>::pointer            pointer;
         typedef typename ft::iterator<iterator_category, T>::reference          reference;

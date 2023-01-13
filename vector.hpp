@@ -94,13 +94,7 @@ namespace ft
             void    insert_do (iterator position, InputIterator first, InputIterator last, false_type);
         template <class InputIterator>
             void    insert_do_select (iterator position, InputIterator first,
-                        InputIterator last, ft::input_iterator_tag);
-        template <class InputIterator>
-            void    insert_do_select (iterator position, InputIterator first,
                         InputIterator last, std::input_iterator_tag);
-        template <class InputIterator>
-            void    insert_do_select (iterator position, InputIterator first,
-                        InputIterator last, ft::forward_iterator_tag);
         template <class InputIterator>
             void    insert_do_select (iterator position, InputIterator first,
                         InputIterator last, std::forward_iterator_tag);

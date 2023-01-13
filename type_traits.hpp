@@ -5,11 +5,11 @@
 
 namespace ft
 {
-	struct input_iterator_tag { };
-	struct output_iterator_tag { };
-	struct forward_iterator_tag : public input_iterator_tag { };
-	struct bidirectional_iterator_tag : public forward_iterator_tag { };
-	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
+	// struct input_iterator_tag { };
+	// struct output_iterator_tag { };
+	// struct forward_iterator_tag : public input_iterator_tag { };
+	// struct bidirectional_iterator_tag : public forward_iterator_tag { };
+	// struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
     template <class Iter>
     struct iterator_traits
@@ -24,25 +24,24 @@ namespace ft
     template <class T>
     struct iterator_traits<T*>
     {
-        typedef ptrdiff_t                       difference_type;
-        typedef T                               value_type;
-        typedef T*                              pointer;
-        typedef T&                              reference;
-        typedef ft::random_access_iterator_tag iterator_category;
+        typedef ptrdiff_t                           difference_type;
+        typedef T                                   value_type;
+        typedef T*                                  pointer;
+        typedef T&                                  reference;
+        typedef std::random_access_iterator_tag     iterator_category;
     };
 
     template <class T>
     struct iterator_traits<const T*>
     {
-        typedef ptrdiff_t                       difference_type;
-        typedef T                               value_type;
-        typedef const T*                        pointer;
-        typedef const T&                        reference;
-        typedef ft::random_access_iterator_tag iterator_category;
+        typedef ptrdiff_t                           difference_type;
+        typedef T                                   value_type;
+        typedef const T*                            pointer;
+        typedef const T&                            reference;
+        typedef std::random_access_iterator_tag     iterator_category;
     };
 
-	template <bool Cond,
-			  class T = void >
+	template <bool Cond, class T = void >
 	struct enable_if {};
 
 	template <class T>
@@ -52,82 +51,82 @@ namespace ft
 	template <class T, T v>
 	struct integral_constant
 	{
-		typedef T						value_type;
-		typedef integral_constant<T,v>	type;
+		typedef T						    value_type;
+		typedef integral_constant<T, v>     type;
 	
-		static const value_type		value = v;
+		static const value_type value = v;
 
 		operator value_type() { return v; }
 	};
 
-	typedef integral_constant<bool,true>	true_type;
-	typedef integral_constant<bool,false>	false_type;
+	typedef integral_constant<bool,true>	                true_type;
+	typedef integral_constant<bool,false>	                false_type;
 
 	template <typename>
-	struct is_integral:							false_type {};
+	struct is_integral:							            false_type {};
 
 	template <>
-	struct is_integral<bool>:					true_type {};
+	struct is_integral<bool>:					            true_type {};
 	template <>
-	struct is_integral<char>:					true_type {};
+	struct is_integral<char>:					            true_type {};
 	template <>
-	struct is_integral<signed char>:			true_type {};
+	struct is_integral<signed char>:			            true_type {};
 	template <>
-	struct is_integral<short int>:				true_type {};
+	struct is_integral<short int>:				            true_type {};
 	template <>
-	struct is_integral<int>:					true_type {};
+	struct is_integral<int>:					            true_type {};
 	template <>
-	struct is_integral<long int>:				true_type {};
+	struct is_integral<long int>:				            true_type {};
 	template <>
-	struct is_integral<unsigned char>:			true_type {};
+	struct is_integral<unsigned char>:			            true_type {};
 	template <>
-	struct is_integral<unsigned short int>:		true_type {};
+	struct is_integral<unsigned short int>:		            true_type {};
 	template <>
-	struct is_integral<unsigned int>:			true_type {};
+	struct is_integral<unsigned int>:			            true_type {};
 	template <>
-	struct is_integral<unsigned long int>:		true_type {};
+	struct is_integral<unsigned long int>:		            true_type {};
 
 	template <>
-	struct is_integral<const bool>:					true_type {};
+	struct is_integral<const bool>:					        true_type {};
 	template <>
-	struct is_integral<const char>:					true_type {};
+	struct is_integral<const char>:					        true_type {};
 	template <>
-	struct is_integral<const signed char>:			true_type {};
+	struct is_integral<const signed char>:			        true_type {};
 	template <>
-	struct is_integral<const short int>:			true_type {};
+	struct is_integral<const short int>:			        true_type {};
 	template <>
-	struct is_integral<const int>:					true_type {};
+	struct is_integral<const int>:					        true_type {};
 	template <>
-	struct is_integral<const long int>:				true_type {};
+	struct is_integral<const long int>:				        true_type {};
 	template <>
-	struct is_integral<const unsigned char>:		true_type {};
+	struct is_integral<const unsigned char>:		        true_type {};
 	template <>
-	struct is_integral<const unsigned short int>:   true_type {};
+	struct is_integral<const unsigned short int>:           true_type {};
 	template <>
-	struct is_integral<const unsigned int>:			true_type {};
+	struct is_integral<const unsigned int>:			        true_type {};
 	template <>
-	struct is_integral<const unsigned long int>:	true_type {};
+	struct is_integral<const unsigned long int>:	        true_type {};
 
 	template <>
-	struct is_integral<volatile bool>:					true_type {};
+	struct is_integral<volatile bool>:					    true_type {};
 	template <>
-	struct is_integral<volatile char>:					true_type {};
+	struct is_integral<volatile char>:					    true_type {};
 	template <>
-	struct is_integral<volatile signed char>:			true_type {};
+	struct is_integral<volatile signed char>:			    true_type {};
 	template <>
-	struct is_integral<volatile short int>:				true_type {};
+	struct is_integral<volatile short int>:				    true_type {};
 	template <>
-	struct is_integral<volatile int>:					true_type {};
+	struct is_integral<volatile int>:					    true_type {};
 	template <>
-	struct is_integral<volatile long int>:				true_type {};
+	struct is_integral<volatile long int>:				    true_type {};
 	template <>
-	struct is_integral<volatile unsigned char>:			true_type {};
+	struct is_integral<volatile unsigned char>:			    true_type {};
 	template <>
-	struct is_integral<volatile unsigned short int>:	true_type {};
+	struct is_integral<volatile unsigned short int>:	    true_type {};
 	template <>
-	struct is_integral<volatile unsigned int>:			true_type {};
+	struct is_integral<volatile unsigned int>:			    true_type {};
 	template <>
-	struct is_integral<volatile unsigned long int>:		true_type {};
+	struct is_integral<volatile unsigned long int>:		    true_type {};
 
 	template <>
 	struct is_integral<const volatile bool>:				true_type {};
@@ -165,7 +164,7 @@ namespace ft
     };
 
 	template <class InputIterator1, class InputIterator2>
-	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+	bool    lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
 		InputIterator2 first2, InputIterator2 last2)
 	{
 		while (first1 != last1)
@@ -181,7 +180,7 @@ namespace ft
 	}
 
 	template <class InputIterator1, class InputIterator2>
-	bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+	bool    equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
 	{
 		while (first1 != last1)
 		{
@@ -222,142 +221,111 @@ namespace ft
             reverse_iterator(const reverse_iterator<Iterator>& other):p(other.base()) {}
 
         template <class Iterator>
-            reverse_iterator& operator=(const reverse_iterator<Iterator>& other) {
-            p = other.base();
-            return *this;}
+            reverse_iterator& operator=(const reverse_iterator<Iterator>& other)
+        { p = other.base(); return *this; }
 
-        reverse_iterator& operator=(const reverse_iterator& other) {
-            p = other.p;
-            return *this;}
+        reverse_iterator& operator=(const reverse_iterator& other)
+        { p = other.p; return *this; }
 
         virtual ~reverse_iterator() {}
 
-        Iter base() const {return this->p;}
+        Iter    base() const {return this->p;}
 
-        reverse_iterator&  operator++() {return (--p, *this);}
-        reverse_iterator   operator++(int) {return reverse_iterator(p--);}
-        reverse_iterator&  operator--() {return (++p, *this);}
-        reverse_iterator   operator--(int) {return reverse_iterator(p++);}
+        reverse_iterator&   operator++()    {return (--p, *this);}
+        reverse_iterator    operator++(int) {return reverse_iterator(p--);}
+        reverse_iterator&   operator--()    {return (++p, *this);}
+        reverse_iterator    operator--(int) {return reverse_iterator(p++);}
 
-        reverse_iterator   operator+(difference_type x) const {return reverse_iterator(p - x);}
-        reverse_iterator   operator-(difference_type x) const {return reverse_iterator(p + x);}
+        reverse_iterator    operator+(difference_type x) const {return reverse_iterator(p - x);}
+        reverse_iterator    operator-(difference_type x) const {return reverse_iterator(p + x);}
 
-        reverse_iterator&  operator+=(difference_type x) {p -= x; return *this;}
-        reverse_iterator&  operator-=(difference_type x) {p += x; return *this;}
+        reverse_iterator&   operator+=(difference_type x) {p -= x; return *this;}
+        reverse_iterator&   operator-=(difference_type x) {p += x; return *this;}
 
-        reference   operator*() const {iterator_type	tmp = p;    return *(--tmp);}
-        pointer     operator->() const {return &(operator*());}
-        reference   operator[](const difference_type x) {return *(p - x - 1);}
+        reference           operator*() const   {iterator_type	tmp = p; return *(--tmp);}
+        pointer             operator->() const  {return &(operator*());}
+
+        reference           operator[](const difference_type x) {return *(p - x - 1);}
 
     protected:
-        Iter p;
+        Iter    p;
     };
 
     template <class T>
-        bool    operator==(const ft::reverse_iterator<T>& lhs, 
+    bool    operator==(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() == rhs.base();
-    }
+    { return lhs.base() == rhs.base(); }
 
     template <class T, class U>
-        bool    operator==(const ft::reverse_iterator<T>& lhs, 
+    bool    operator==(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() == rhs.base();
-    }
+    { return lhs.base() == rhs.base(); }
 
     template <class T>
-        bool    operator!=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator!=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() != rhs.base();
-    }
+    { return lhs.base() != rhs.base(); }
 
     template <class T, class U>
-        bool    operator!=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator!=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() != rhs.base();
-    }
+    { return lhs.base() != rhs.base(); }
 
     template <class T>
-        bool    operator>(const ft::reverse_iterator<T>& lhs, 
+    bool    operator>(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() < rhs.base();
-    }
+    { return lhs.base() < rhs.base(); }
 
     template <class T, class U>
-        bool    operator>(const ft::reverse_iterator<T>& lhs, 
+    bool    operator>(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() < rhs.base();
-    }
+    { return lhs.base() < rhs.base(); }
 
     template <class T>
-        bool    operator>=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator>=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() <= rhs.base();
-    }
+    { return lhs.base() <= rhs.base(); }
 
     template <class T, class U>
-        bool    operator>=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator>=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() <= rhs.base();
-    }
+    { return lhs.base() <= rhs.base(); }
 
     template <class T>
-        bool    operator<(const ft::reverse_iterator<T>& lhs, 
+    bool    operator<(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() > rhs.base();
-    }
+    { return lhs.base() > rhs.base(); }
 
     template <class T, class U>
-        bool    operator<(const ft::reverse_iterator<T>& lhs, 
+    bool    operator<(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() > rhs.base();
-    }
+    { return lhs.base() > rhs.base(); }
 
     template <class T>
-        bool    operator<=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator<=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return lhs.base() >= rhs.base();
-    }
+    { return lhs.base() >= rhs.base(); }
 
     template <class T, class U>
-        bool    operator<=(const ft::reverse_iterator<T>& lhs, 
+    bool    operator<=(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return lhs.base() >= rhs.base();
-    }
+    { return lhs.base() >= rhs.base(); }
     
     template <class T>
-        ft::reverse_iterator<T>
+    ft::reverse_iterator<T>
         operator+( typename ft::reverse_iterator<T>::difference_type x,
         ft::reverse_iterator<T> it)
-    {
-        return (it + x);
-    }
+    { return (it + x); }
 
     template <class T>
-        typename ft::reverse_iterator<T>::difference_type
+    typename ft::reverse_iterator<T>::difference_type
         operator-(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<T>& rhs)
-    {
-        return rhs.base() - lhs.base();
-    }
+    { return rhs.base() - lhs.base(); }
 
     template <class T, class U>
-        typename ft::reverse_iterator<T>::difference_type
+    typename ft::reverse_iterator<T>::difference_type
         operator-(const ft::reverse_iterator<T>& lhs, 
         const ft::reverse_iterator<U>& rhs)
-    {
-        return rhs.base() - lhs.base();
-    }
+    { return rhs.base() - lhs.base(); }
 }

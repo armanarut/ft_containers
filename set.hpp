@@ -6,15 +6,13 @@ namespace ft
 {
     template<
         class Key,
-        class T,
         class Compare = std::less<Key>,
-        class Alloc = std::allocator<ft::pair<const Key, T> >
-    > class map
+        class Alloc = std::allocator<Key>
+    > class set
     {
     public:
         class                                                   value_compare;
         typedef Key                                             key_type;
-        typedef T                                               mapped_type;
         typedef Compare                                         key_compare;
         typedef Alloc                                           allocator_type;
         typedef typename allocator_type::value_type             value_type;
@@ -24,28 +22,23 @@ namespace ft
         typedef typename allocator_type::const_reference        const_reference;
         typedef typename allocator_type::pointer                pointer;
         typedef typename allocator_type::const_pointer          const_pointer;
-        typedef tree_iterator<value_type>                       iterator;
+        typedef tree_iterator<const value_type>                 iterator;
         typedef tree_iterator<const value_type>                 const_iterator;
         typedef ft::reverse_iterator<iterator>                  reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
 
-        explicit    map(const Compare& comp = key_compare(),
-                        const allocator_type& alloc = allocator_type());
+        explicit    set(const Compare& comp = key_compare(),
+                        const Alloc& alloc = allocator_type());
         template <class InputIt>
-                    map(InputIt first, InputIt last,
+                    set(InputIt first, InputIt last,
                         const Compare& comp = key_compare(),
-                        const allocator_type& alloc = allocator_type());
-                    map(const map& other);
-                    ~map();
+                        const Alloc& alloc = allocator_type());
+                    set(const set& other);
+                    ~set();
 
-        map&        operator=( const map& other );
+        set&        operator=( const set& other );
 
         allocator_type  get_allocator() const;
-
-        /*********[Element access]*********/
-        T&          at(const Key& key);
-        const T&    at(const Key& key) const;
-        T&          operator[](const Key& key);
 
         /*********[Iterators]*********/
         iterator                begin();
@@ -72,7 +65,7 @@ namespace ft
         iterator    erase (iterator position);
         iterator    erase (iterator first, iterator last);
         size_type   erase(const Key& key);
-        void        swap (map& other);
+        void        swap (set& other);
 
         /*********[Lookup]*********/
         size_type                                   count(const Key& key) const;
@@ -86,35 +79,32 @@ namespace ft
         const_iterator                              upper_bound( const Key& key ) const;
 
         /*********[Observers]*********/
-        key_compare    key_comp() const;
-        value_compare  value_comp() const;
+        key_compare     key_comp() const;
+        value_compare   value_comp() const;
 
         class value_compare
         {
-            friend class map;
+                friend class set;
 
-        protected:
-            Compare     comp;
-            value_compare(Compare c):comp(c) {}
+            protected:
+                Compare     comp;
+                value_compare(Compare c):comp(c) {}
 
-        public:
-            value_compare():comp(Compare()){}
+            public:
+                value_compare():comp(Compare()){}
 
-            bool operator()(const value_type& lhs, const value_type& rhs) const
-            {
-                return comp(lhs.first, rhs.first);
-            }
+                bool operator()(const value_type& lhs, const value_type& rhs) const
+                {
+                    return comp(lhs, rhs);
+                }
         };
 
     private:
-        typedef RBnode<value_type>                                  node_type;
-        typedef RBtree<value_type, value_compare, allocator_type>   tree_type;
+        typedef RBnode<const value_type>                                  node_type;
+        typedef RBtree<const value_type, value_compare, allocator_type>   tree_type;
 
         tree_type  _tree;
-
-        value_type get_value_type(const Key& key) const
-        { return ft::make_pair(key, mapped_type()); }
     };
 }
 
-#include "map_impl.hpp"
+#include "set_impl.hpp"

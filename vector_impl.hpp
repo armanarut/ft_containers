@@ -6,18 +6,18 @@ namespace ft
     vector<T, Allocator>::vector (const allocator_type& alloc)
         :
             _alloc(alloc),
-            _start(ft_nullptr),
-            _capacity(ft_nullptr),
-            _end(ft_nullptr) {}
+            _start(ft::ft_nullptr),
+            _capacity(ft::ft_nullptr),
+            _end(ft::ft_nullptr) {}
 
     template <class T, class Allocator>
     vector<T, Allocator>::vector (size_type n, const value_type& val,
         const allocator_type& alloc)
         :
             _alloc(alloc),
-            _start(ft_nullptr),
-            _capacity(ft_nullptr),
-            _end(ft_nullptr)
+            _start(ft::ft_nullptr),
+            _capacity(ft::ft_nullptr),
+            _end(ft::ft_nullptr)
     {
         insert(this->begin(), n, val);
     }
@@ -28,9 +28,9 @@ namespace ft
         const allocator_type& alloc)
         :
             _alloc(alloc),
-            _start(ft_nullptr),
-            _capacity(ft_nullptr),
-            _end(ft_nullptr)
+            _start(ft::ft_nullptr),
+            _capacity(ft::ft_nullptr),
+            _end(ft::ft_nullptr)
     {
         insert(this->begin(), first, last);
     }
@@ -39,9 +39,9 @@ namespace ft
     vector<T, Allocator>::vector (const vector& x)
         :
             _alloc(x._alloc),
-            _start(ft_nullptr),
-            _capacity(ft_nullptr),
-            _end(ft_nullptr) { *this = x; }
+            _start(ft::ft_nullptr),
+            _capacity(ft::ft_nullptr),
+            _end(ft::ft_nullptr) { *this = x; }
 
     template <class T, class Allocator>
     vector<T, Allocator>& vector<T, Allocator>::operator=(const vector& x)
@@ -401,16 +401,16 @@ namespace ft
     template <class T, class Allocator>
     template <class InputIterator>
     void    vector<T, Allocator>::insert_do_select (iterator position,
-        InputIterator first, InputIterator last, ft::input_iterator_tag)
+        InputIterator first, InputIterator last, std::input_iterator_tag)
     {
         size_type begin_size = ft::distance(this->begin(), position);
         pointer old_start = _start;
         pointer old_end = _end;
         size_type old_capacity = this->capacity();
 
-        _start = ft_nullptr;
-        _end = ft_nullptr;
-        _capacity = ft_nullptr;
+        _start = ft::ft_nullptr;
+        _end = ft::ft_nullptr;
+        _capacity = ft::ft_nullptr;
         this->insert(this->begin(), iterator(old_start), iterator(old_start + begin_size));
         while (first != last)
         {
@@ -429,7 +429,7 @@ namespace ft
     template <class T, class Allocator>
     template <class InputIterator>
     void    vector<T, Allocator>::insert_do_select (iterator position,
-        InputIterator first, InputIterator last, ft::forward_iterator_tag)
+        InputIterator first, InputIterator last, std::forward_iterator_tag)
     {
         size_type n = ft::distance(first, last);
         size_type m = ft::distance(position, this->end());
@@ -456,22 +456,6 @@ namespace ft
             _end++;
             first++;
         }
-    }
-
-    template <class T, class Allocator>
-    template <class InputIterator>
-    void    vector<T, Allocator>::insert_do_select (iterator position,
-        InputIterator first, InputIterator last, std::input_iterator_tag)
-    {
-        insert_do_select(position, first, last, ft::input_iterator_tag());
-    }
-
-    template <class T, class Allocator>
-    template <class InputIterator>
-    void    vector<T, Allocator>::insert_do_select (iterator position,
-        InputIterator first, InputIterator last, std::forward_iterator_tag)
-    {
-        insert_do_select(position, first, last, ft::forward_iterator_tag());
     }
 
     template <class T, class Allocator>

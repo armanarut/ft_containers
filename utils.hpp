@@ -2,7 +2,6 @@
 
 namespace ft
 {
-
 	struct ft_nullptr
 	{
 		template <class T>
@@ -12,7 +11,21 @@ namespace ft
 		operator T C::*() const { return (0); }
 
 	private:
-		void operator&() const;
+		void	operator&() const;
 	}ft_nullptr = {};
 
+	template< class InputIt, class Distance >
+	void advance(InputIt& it, Distance n)
+	{
+		while (n > 0)
+        {
+            --n;
+            ++it;
+        }
+        while (n < 0)
+        {
+            ++n;
+            --it;
+        }
+	}
 }

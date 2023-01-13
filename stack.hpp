@@ -23,18 +23,18 @@ namespace ft
         stack&      operator=(const stack& other);
 
         /*********[Element access]*********/
-        reference top();
+        reference       top();
         const_reference top() const;
 
         /*********[Capacity]*********/
-        bool empty() const;
-        size_type size() const;
+        bool        empty() const;
+        size_type   size() const;
 
         /*********[Modifiers]*********/
-        void push(const value_type& value);
-        void pop();
+        void    push(const value_type& value);
+        void    pop();
 
-        Container c;
+        Container   c;
     };
 }
 
