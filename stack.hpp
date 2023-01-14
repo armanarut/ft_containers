@@ -34,6 +34,7 @@ namespace ft
         void    push(const value_type& value);
         void    pop();
 
+    protected:
         Container   c;
     };
 }
