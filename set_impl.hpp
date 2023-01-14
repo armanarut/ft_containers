@@ -185,33 +185,33 @@ namespace ft
     ft::pair<typename ft::set<Key, Compare, Alloc>::iterator,
         typename ft::set<Key, Compare, Alloc>::iterator>
         ft::set<Key, Compare, Alloc>::equal_range(const Key& key)
-    { return _tree.equal_range(key); }
+    { return ft::make_pair(lower_bound(key), upper_bound(key)); }
 
     template <class Key, class Compare, class Alloc>
     ft::pair<typename ft::set<Key, Compare, Alloc>::const_iterator,
         typename ft::set<Key, Compare, Alloc>::const_iterator>
         ft::set<Key, Compare, Alloc>::equal_range(const Key& key) const
-    { return _tree.equal_range(key); }
+    { return ft::make_pair(lower_bound(key), upper_bound(key)); }
 
     template <class Key, class Compare, class Alloc>
     typename ft::set<Key, Compare, Alloc>::iterator
         ft::set<Key, Compare, Alloc>::lower_bound( const Key& key )
-    { return _tree.lower_bound(key); }
+    { return iterator(_tree.lower_bound(key)); }
 
     template <class Key, class Compare, class Alloc>
     typename ft::set<Key, Compare, Alloc>::const_iterator
         ft::set<Key, Compare, Alloc>::lower_bound( const Key& key ) const
-    { return _tree.lower_bound(key); }
+    { return iterator(_tree.lower_bound(key)); }
 
     template <class Key, class Compare, class Alloc>
     typename ft::set<Key, Compare, Alloc>::iterator
         ft::set<Key, Compare, Alloc>::upper_bound( const Key& key )
-    { return _tree.upper_bound(key); }
+    { return iterator(_tree.upper_bound(key)); }
 
     template <class Key, class Compare, class Alloc>
     typename ft::set<Key, Compare, Alloc>::const_iterator
         ft::set<Key, Compare, Alloc>::upper_bound( const Key& key ) const
-    { return _tree.upper_bound(key); }
+    { return iterator(_tree.upper_bound(key)); }
 
     /********************[Observers]*******************/
 

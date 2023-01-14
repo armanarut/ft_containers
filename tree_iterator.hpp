@@ -57,21 +57,24 @@ namespace ft
 
         tree_iterator&  operator++()
         {
-            if (_node->child[RIGHT])
+            if (_node->parent && _node->parent != _node->parent->parent)
             {
-                _node = _node->child[RIGHT];
-                while (_node->child[LEFT])
-                    _node = _node->child[LEFT];
-            }
-            else
-            {
-                node_type*  tmp = _node->parent;
-                while (_node == tmp->child[RIGHT])
+                if (_node->child[RIGHT])
                 {
-                    _node = tmp;
-                    tmp = _node->parent;
+                    _node = _node->child[RIGHT];
+                    while (_node->child[LEFT])
+                        _node = _node->child[LEFT];
                 }
-                _node = tmp;
+                else
+                {
+                    node_type*  tmp = _node->parent;
+                    while (_node == tmp->child[RIGHT])
+                    {
+                        _node = tmp;
+                        tmp = _node->parent;
+                    }
+                    _node = tmp;
+                }
             }
             return *this;
         };

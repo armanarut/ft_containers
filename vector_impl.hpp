@@ -52,8 +52,8 @@ namespace ft
         {
             this->clear();
             _alloc.deallocate(_start, this->capacity());
+            _capacity = _end;
         }
-        _capacity = _end;
         _alloc = x._alloc;
         this->assign(x.begin(), x.end());
         return *this;
@@ -360,7 +360,7 @@ namespace ft
             throw (std::length_error("vector::insert"));
         size_type m = ft::distance(position, this->end());
 
-        if (_capacity <= _end + n)
+        if (_capacity < _end + n)
         {
             size_type new_size = this->empty() ? n: (this->size() <= n) ? (this->size() + n): this->capacity() * 2;
             if (new_size > this->max_size())
@@ -374,18 +374,23 @@ namespace ft
                 _alloc.destroy(_end + n - i);
             _alloc.construct(_end + n - i, *(_end - i));
         }
-        while (n--)
+        try
         {
-            if (_end - m < old_end)
-                _alloc.destroy(_end - m);
-            _alloc.construct(_end++ - m, val);
+            while (n--)
+            {
+                if (_end - m < old_end)
+                    _alloc.destroy(_end - m);
+                _alloc.construct(_end++ - m, val);
+            }
         }
-
-        // catch(...)
-        // {
-            // _alloc.destroy();
-            // throw;
-        // }
+        catch(...)
+        {
+            _end += n;
+            this->clear();
+            _alloc.deallocate(_start, this->capacity());
+            _capacity = _start;
+            throw;
+        }
     }
 
     template <class T, class Allocator>
@@ -434,7 +439,7 @@ namespace ft
         size_type n = ft::distance(first, last);
         size_type m = ft::distance(position, this->end());
 
-        if (_capacity <= _end + n)
+        if (_capacity < _end + n)
         {
             size_type new_size = this->empty() ? n: (this->size() <= n) ? (this->size() + n): this->capacity() * 2;
             if (new_size > this->max_size())
@@ -448,13 +453,24 @@ namespace ft
                 _alloc.destroy(_end + n - i);
             _alloc.construct(_end + n - i, *(_end - i));
         }
-        while (n--)
+        try
         {
-            if (_end - m < old_end)
-                _alloc.destroy(_end - m);
-            _alloc.construct(_end - m , *first);
-            _end++;
-            first++;
+            while (n--)
+            {
+                if (_end - m < old_end)
+                    _alloc.destroy(_end - m);
+                _alloc.construct(_end - m , *first);
+                _end++;
+                first++;
+            }
+        }
+        catch(...)
+        {
+            _end += n;
+            this->clear();
+            _alloc.deallocate(_start, this->capacity());
+            _capacity = _start;
+            throw;
         }
     }
 
@@ -502,12 +518,12 @@ namespace ft
         tmp = x._start;
         x._start = this->_start;
         this->_start = tmp;
-        tmp = x._capacity;
-        x._capacity = this->_capacity;
-        this->_capacity = tmp;
         tmp = x._end;
         x._end = this->_end;
         this->_end = tmp;
+        tmp = x._capacity;
+        x._capacity = this->_capacity;
+        this->_capacity = tmp;
     }
 
     template <class T, class Allocator>
@@ -559,8 +575,9 @@ namespace ft
     template <class T, class Alloc>
         void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs)
     {
-        ft::vector<T, Alloc> tmp(lhs);
-        lhs = rhs;
-        rhs = tmp;
+        ft::vector<T, Alloc> tmp;
+        tmp.swap(lhs);
+        lhs.swap(rhs);
+        rhs.swap(tmp);
     }
 }

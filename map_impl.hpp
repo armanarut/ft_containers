@@ -217,33 +217,33 @@ namespace ft
     ft::pair<typename ft::map<Key, T, Compare, Alloc>::iterator,
         typename ft::map<Key, T, Compare, Alloc>::iterator>
         ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key)
-    { return _tree.equal_range(get_value_type(key)); }
+    { return ft::make_pair(lower_bound(key), upper_bound(key)); }
 
     template <class Key, class T, class Compare, class Alloc>
     ft::pair<typename ft::map<Key, T, Compare, Alloc>::const_iterator,
         typename ft::map<Key, T, Compare, Alloc>::const_iterator>
         ft::map<Key, T, Compare, Alloc>::equal_range(const Key& key) const
-    { return _tree.equal_range(get_value_type(key)); }
+    { return ft::make_pair(lower_bound(key), upper_bound(key)); }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::iterator
         ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key )
-    { return _tree.lower_bound(get_value_type(key)); }
+    { return iterator(_tree.lower_bound(get_value_type(key))); }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::const_iterator
         ft::map<Key, T, Compare, Alloc>::lower_bound( const Key& key ) const
-    { return _tree.lower_bound(get_value_type(key)); }
+    { return iterator(_tree.lower_bound(get_value_type(key))); }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::iterator
         ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key )
-    { return _tree.upper_bound(get_value_type(key)); }
+    { return iterator(_tree.upper_bound(get_value_type(key))); }
 
     template <class Key, class T, class Compare, class Alloc>
     typename ft::map<Key, T, Compare, Alloc>::const_iterator
         ft::map<Key, T, Compare, Alloc>::upper_bound( const Key& key ) const
-    { return _tree.upper_bound(get_value_type(key)); }
+    { return iterator(_tree.upper_bound(get_value_type(key))); }
 
     /********************[Observers]*******************/
 

@@ -192,9 +192,10 @@ namespace ft
 		return true;
 	}
 
+
 	template <class InputIterator>
     typename iterator_traits<InputIterator>::difference_type
-		distance(InputIterator first, InputIterator last)
+		distance_do(InputIterator first, InputIterator last, std::input_iterator_tag)
     {
         typename iterator_traits<InputIterator>::difference_type n = 0;
 
@@ -203,6 +204,20 @@ namespace ft
 		return n;
     }
 
+	template <class InputIterator>
+    typename iterator_traits<InputIterator>::difference_type
+		distance_do(InputIterator first, InputIterator last, std::random_access_iterator_tag)
+    {
+		return last - first;
+    }
+
+	template <class InputIterator>
+    typename iterator_traits<InputIterator>::difference_type
+		distance(InputIterator first, InputIterator last)
+    {
+        typedef typename iterator_traits<InputIterator>::iterator_category category;
+        return distance_do(first, last, category());
+    }
     template <class Iter>
     struct reverse_iterator
     {

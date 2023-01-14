@@ -82,15 +82,15 @@ namespace ft
             }
             while (!success)
             {
-                bool dir = _comp(root->data, value);
-                if (dir || _comp(value, root->data))
+                bool dir = _comp(value, root->data);
+                if (dir || _comp(root->data, value))
                 {
-                    if (root->child[dir] != 0)
-                        root = root->child[dir];
+                    if (root->child[1 - dir] != 0)
+                        root = root->child[1 - dir];
                     else
                     {
-                        root->child[dir] = new_node(root, value);
-                        root = root->child[dir];
+                        root->child[1 - dir] = new_node(root, value);
+                        root = root->child[1 - dir];
                         success = true;
                     }
                 }
@@ -121,6 +121,8 @@ namespace ft
             node_type*  x;
             bool        color;
 
+            if (z == _header)
+                return this->end();
             y = z;
             color = y->color;
             if (!z->child[LEFT])
@@ -238,74 +240,47 @@ namespace ft
         {
             node_type*  root = _header->parent;
 
-            while (root)
+            root = search_node(root, value);
+            if (root)
+                return iterator(root);
+            else
+                return this->end();
+        }
+
+        node_type*  lower_bound( const value_type& value ) const
+        {
+            node_type* node = _header->parent;
+            node_type* lower = _header;
+
+            while (node != 0)
             {
-                bool dir = _comp(root->data, value);
-                if (dir || _comp(value, root->data))
+                if (!_comp(node->data, value))
                 {
-                    if (root->child[dir])
-                        root = root->child[dir];
-                    else break;
+                    lower = node;
+                    node = node->child[LEFT];
                 }
-                else return iterator(root);
+                else
+                    node = node->child[RIGHT];
             }
-            return this->end();
+            return lower;
         }
 
-        ft::pair<iterator,iterator>                 equal_range(const value_type& value)
+        node_type*  upper_bound( const value_type& value ) const
         {
-            return ft::make_pair(lower_bound(value), upper_bound(value));
-        }
+            node_type* node = _header->parent;
+            node_type* lower = _header;
 
-        ft::pair<const_iterator,const_iterator>     equal_range(const value_type& value) const
-        {
-            return ft::make_pair(lower_bound(value), upper_bound(value));
-        }
-
-        iterator                                    lower_bound( const value_type& value )
-        {
-            iterator it = begin();
-
-            while (it != end() && _comp(*it, value))
-                ++it;
-            return it;
-        }
-
-        const_iterator                              lower_bound( const value_type& value ) const
-        {
-            const_iterator it = begin();
-
-            while (it != end() && _comp(*it, value))
-                ++it;
-            return it;
-        }
-
-        iterator                                    upper_bound( const value_type& value )
-        {
-            iterator it = end();
-
-            if (it != begin())
-                while (_comp(value, *(--it)))
-                    if (it == begin())
-                        return it;
-            if (it == end())
-                return it;
-            else
-                return ++it;
-        }
-
-        const_iterator                              upper_bound( const value_type& value ) const
-        {
-            const_iterator it = end();
-
-            if (it != begin())
-                while (_comp(value, *(--it)))
-                    if (it == begin())
-                        return it;
-            if (it == end())
-                return it;
-            else
-                return ++it;
+            while (node != 0)
+            {
+                if (_comp(value, node->data))
+                {
+                    lower = node;
+                    node = node->child[LEFT];
+                }
+                else
+                    node = node->child[RIGHT];
+            }
+            return lower;
         }
 
     protected:
@@ -385,45 +360,14 @@ namespace ft
                         y->child[1 - dir]->color = BLACK;
                     }
                     x->parent->color = BLACK;
-                    rotate_dir(x->parent, dir);
+                    if (x->parent->child[1 - dir])
+                        rotate_dir(x->parent, dir);
                     x = _header->parent;
                 }
             }
             if (x)
                 x->color = BLACK;
         }
-
-        // void    print_set()
-        // {
-        //     int id = 0;
-        //     iterator it = begin();
-
-        //     std::cout << "________________tree_________________\n";
-        //     std::cout << "      root = " << _header->parent->data << "  size = " << size()<< std::endl;
-
-        //     while (it != end())
-        //     {
-        //         std::cout << ++id << ". " << (*it) << (it.base()->color ? " red" :" black") << std::endl;
-        //         ++it;
-        //     }
-        //     std::cout << "_____________________________________\n";
-        // }
-
-        // void    print_map()
-        // {
-        //     int id = 0;
-        //     iterator it = begin();
-
-        //     std::cout << "________________tree_________________\n";
-        //     std::cout << "      root = " << _header->parent->data.first << "  size = " << size()<< std::endl;
-
-        //     while (it != end())
-        //     {
-        //         std::cout << ++id << ". " << (*it).first << (it.base()->color ? " red" :" black") << std::endl;
-        //         ++it;
-        //     }
-        //     std::cout << "_____________________________________\n";
-        // }
 
         void    rotate_dir(node_type* x, bool dir)
         {
@@ -442,7 +386,7 @@ namespace ft
             x->parent = y;
         };
 
-        node_type*  search_node(node_type* x, const value_type& value)
+        node_type*  search_node(node_type* x, const value_type& value) const
         {
             if (x && _comp(value, x->data))
                 return search_node(x->child[LEFT], value);
@@ -514,16 +458,4 @@ namespace ft
             _alloc.deallocate(node, 1);
         };
     };
-
-
-
-
-
-
-
-
-
-
-
-
 }
